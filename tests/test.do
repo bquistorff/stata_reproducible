@@ -2,6 +2,7 @@ scalar drop _all
 mac drop _all
 discard
 file close _all
+set scheme s2mono
 
 sysuse auto, clear
 drop make //string variable and I don't normalize those
