@@ -55,7 +55,8 @@ program strip_nodeterminism_gph
 			local new_line =`"`macval(line)'"'
 			forval i=1/`: list sizeof items' {
 				local item : word `i' of `items'
-				local len = length("`item'")
+				*local len = length("`item'")
+				local len=9
 				local new_item = "K"+string(`i',"%0`=`len'-1'.0f")
 				local new_line = subinstr(`"`macval(new_line)'"', "`item'","`new_item'",.)
 			}
