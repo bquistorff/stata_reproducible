@@ -14,7 +14,7 @@ copy  ../tests/auto.dta  ../tests/auto-v`ext'.dta, replace
 twoway (scatter mpg price)
 graph_save ../tests/scatter-v`ext'.gph, replace
 *Can't export to PDF on Unix for version <14
-cap graph_export ../tests/scatter-v`ext'.pdf, replace
+cap noi graph_export ../tests/scatter-v`ext'.pdf, replace
 
 sleep 1000
 
@@ -22,6 +22,6 @@ saver ../tests/auto.dta, replace
 copy  ../tests/auto.dta  ../tests/auto2-v`ext'.dta, replace
 twoway (scatter mpg price)
 graph_save ../tests/scatter2-v`ext'.gph, replace
-cap graph_export ../tests/scatter2-v`ext'.pdf, replace
+cap noi graph_export ../tests/scatter2-v`ext'.pdf, replace
 
 erase ../tests/auto.dta
