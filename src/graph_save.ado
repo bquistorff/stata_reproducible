@@ -69,10 +69,16 @@ program strip_nodeterminism_gph
 		file seek `in' query 
 		local pass_off_pos = r(loc)
 		file close `in'
+		
+		file close `out'
+		file open `out' using `filename'.nor, read text
+		file seek `out' eof
+		file seek `out' query 
 		local pass_off_pos_out = r(loc)
 		file close `out'
 		
-		strip_nodeterminism_serset `pass_off_pos' `pass_off_pos_out', filename_in(`filename') filename_out(`filename'.nor) pass_of_local(pos) vers(`gversion')
+		copy_serset `pass_off_pos' `pass_off_pos_out', filename_in(`filename') filename_out(`filename'.nor) pass_of_local(pos) nvar_local(nvar) vers(`gversion')
+		strip_nodeterminism_serset , filename_out(`filename'.nor) pos_out(`pass_off_pos_out') vers(`gversion') nvar(`nvar')
 	}
 	
 	file close `in'
@@ -81,15 +87,16 @@ program strip_nodeterminism_gph
 	erase `filename'.nor
 end
 
-program strip_nodeterminism_serset
-	syntax anything, filename_in(string) filename_out(string) pass_of_local(string) vers(int)
+program copy_serset
+	syntax anything, filename_in(string) filename_out(string) pass_of_local(string) nvar_local(string) vers(int)
 	gettoken pos pos_out: anything
 	tempname in out
+	
 	
 	*Get the outline of the serset from Stata rather than parsing ourselves
 	*Could parse the <series> tags above, but this is easier
 	file open `in' using `filename_in', read binary
-	file seek `in' `=`pos''
+	file seek `in' `pos'
 	file sersetread `in'
 	file seek `in' query 
 	local pass_off_pos = r(loc)
@@ -97,21 +104,32 @@ program strip_nodeterminism_serset
 	c_local `pass_of_local'     `pass_off_pos'
 	
 	serset
-	local nobs = `r(N)'
-	local nvar = `r(k)'
+	*local nobs = `r(N)'
+	c_local `nvar_local' `r(k)'
 	
 	file open `out' using `filename_out', write append binary
 	file sersetwrite `out'
 	file close `out'
 	serset drop
 	
+end
+
+program strip_nodeterminism_serset
+	syntax , filename_out(string) pos_out(int) vers(int) [nvar(string)]
+	tempname out
 	file open `out' using `filename_out', read write binary
-	file seek `out' `=`pos_out''
-	
+	file seek `out' `pos_out'
+	if "`nvar'"==""{
+		file sersetread `out'
+		serset
+		*local nobs = `r(N)'
+		local nvar = `r(k)'
+		serset drop
+		file seek `out' `pos_out'
+	}
 	zero_padding `out' 26
 	
-	file seek `out' query
-	file seek `out' `=r(loc)+`nvar''
+	file seek `out' `=`pos_out'+26+`nvar''
 	
 	forval i=1/`nvar'{
 		zero_padding `out' `=cond(`vers'==3,54,150)'

@@ -7,7 +7,11 @@ program zero_padding
 	scalar `charval'=1
 	
 	forval b=1/`total_size'{
-		if `charval'!=0 file read  `fhandle' %`chunk_size'bu `charval'
-		else            file write `fhandle' %`chunk_size'bu (0)
+		if `=`charval''!=0 {
+			file read  `fhandle' %`chunk_size'bu `charval'
+		}
+		else{
+			file write `fhandle' %`chunk_size'bu (0)
+		}
 	}
 end
