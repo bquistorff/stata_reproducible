@@ -3,7 +3,7 @@ program save_all_figs
 	
 	if "`gph'"!="nogph" graph_save "fig/gph/`base_name'.gph", replace
 	
-	if "${OMIT_FIG_EXPORT}"!="1" exit
+	if "${OMIT_FIG_EXPORT}"=="1" exit
 	
 	graph_export "fig/pdf/`base_name'.pdf", replace
 	graph_export "fig/eps/`base_name'.eps", replace
