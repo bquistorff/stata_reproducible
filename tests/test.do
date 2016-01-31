@@ -7,12 +7,13 @@ include preferences.do
 local main_version = substr("`c(stata_version)'",1,2)
 sysuse auto, clear
 drop make //string variable and I don't normalize those
-twoway (scatter mpg price), title("Title") note("Notes")
 
 * Export platform-version specific versions
 * This is to see all the differences
 save raw/auto-v`main_version'-raw.dta, replace
 saver auto-v`main_version'.dta, replace version(`main_version')
+
+twoway (scatter mpg price), title("Title") note("Notes") //has to go after save as data path written
 
 graph save raw/scatter-v`main_version'-`c(os)'-raw.gph, replace
 graph_save scatter-v`main_version'.gph, replace
