@@ -1,2 +1,3 @@
-#Ignore Scons cached content
-raw/
+# gitignore
+*.log
+
