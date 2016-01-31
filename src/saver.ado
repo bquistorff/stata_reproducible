@@ -26,7 +26,7 @@ program saver
 		save `anything', `options'
 	}
 	
-	if ("`reproducible'"!="noreproducible" & inlist("`version'","13","14")) strip_nodeterminism_dta `anything'
+	if ("`reproducible'"!="noreproducible") strip_nodeterminism_dta `anything'
 
 end
 
