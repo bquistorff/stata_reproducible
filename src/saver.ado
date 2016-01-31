@@ -1,9 +1,11 @@
 *! version 0.0.8 Brian Quistorff <bquistorff@gmail.com>
 *! Makes dta files reproducible by removing any non-determinism
 *! (e.g. timestamps, randomness). Plus a few helper options.
-*TODO: SOURCE_DATE_EPOCH, take care of them asking for older version
+*TODO: SOURCE_DATE_EPOCH
+*NB: Using -version 13: save ...- will produce a different sized file than -save ...-
+*   Because things like characteristics, which are variable length, will differ.
 program saver
-	syntax anything [, noDATAsig noCOMPress noREPROducible *]
+	syntax anything [, noDATAsig noCOMPress noREPROducible VERsion(string) *]
 	
 	if "`compress'"!="nocompress" compress
 	
@@ -16,19 +18,20 @@ program saver
 	cap unab temp: _*
 	if `:list sizeof temp'>0 di "Warning: Saving with temporary (_*) vars"
 	
-	save `anything', `options'
+	if "`version'"=="" local version $DTA_DEFAULT_VERSION
+	if "`version'"=="13" & `c(stata_version)'>=14{
+		saveold `anything', `options' version(`version')
+	}
+	else{
+		save `anything', `options'
+	}
 	
-	if "`reproducible'"!="noreproducible" strip_nodeterminism_dta `anything'
+	if ("`reproducible'"!="noreproducible" & inlist("`version'","13","14")) strip_nodeterminism_dta `anything'
 
 end
 
 program strip_nodeterminism_dta
 	args filename
-
-	if `c(stata_version)'<13 | `c(stata_version)'>=16{
-		di "Option reproducible does not work for versions below 13 or those at least 16."
-		exit
-	}
 	
 	tempname fhandle k lbl_len additional time_len char_len val_lbl_len
 	
@@ -36,6 +39,11 @@ program strip_nodeterminism_dta
 	
 	file seek `fhandle' 28
 	file read  `fhandle' %3s ver_str
+	
+	if !inlist(`ver_str',117,118){
+		di "Option reproducible does not work for versions below 13 or those at least 16."
+		exit
+	}
 	
 	local vname_len = cond(`ver_str'==117,33,129)
 	

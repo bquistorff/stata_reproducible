@@ -1,7 +1,8 @@
 *TODO: SOURCE_DATE_EPOCH
 *Can't read/write in place because sometimes the identfiers are different length
+*NB: -version- does not affect graph saving/exporting
 program graph_save
-	syntax anything [, asis *]
+	syntax anything [, asis * /*version(string)*/]
 	_assert "`asis'"=="", msg("Can not parse asis graphs")
 	gettoken first second : anything
 	local filename = cond("`second'"=="","`first'", "`second'")
@@ -78,8 +79,8 @@ program strip_nodeterminism_gph
 		local pass_off_pos_out = r(loc)
 		file close `out'
 		
-		copy_serset `pass_off_pos' `pass_off_pos_out', filename_in(`filename') filename_out(`filename'.nor) pass_of_local(pos) nvar_local(nvar) vers(`gversion')
-		strip_nodeterminism_serset , filename_out(`filename'.nor) pos_out(`pass_off_pos_out') vers(`gversion') nvar(`nvar')
+		copy_serset `pass_off_pos' `pass_off_pos_out', filename_in(`filename') filename_out(`filename'.nor) pass_of_local(pos) vers(`gversion')
+		strip_nodeterminism_serset , filename_out(`filename'.nor) pos_out(`pass_off_pos_out') vers(`gversion')
 	}
 	
 	file close `in'
@@ -89,10 +90,9 @@ program strip_nodeterminism_gph
 end
 
 program copy_serset
-	syntax anything, filename_in(string) filename_out(string) pass_of_local(string) nvar_local(string) vers(int)
+	syntax anything, filename_in(string) filename_out(string) pass_of_local(string) vers(int)
 	gettoken pos pos_out: anything
 	tempname in out
-	
 	
 	*Get the outline of the serset from Stata rather than parsing ourselves
 	*Could parse the <series> tags above, but this is easier
@@ -104,10 +104,6 @@ program copy_serset
 	file close `in'
 	c_local `pass_of_local'     `pass_off_pos'
 	
-	serset
-	*local nobs = `r(N)'
-	c_local `nvar_local' `r(k)'
-	
 	file open `out' using `filename_out', write append binary
 	file sersetwrite `out'
 	file close `out'
@@ -116,26 +112,20 @@ program copy_serset
 end
 
 program strip_nodeterminism_serset
-	syntax , filename_out(string) pos_out(int) vers(int) [nvar(string)]
-	tempname out
+	syntax , filename_out(string) pos_out(int) vers(int)
+	tempname out k_vars n_obs
 	file open `out' using `filename_out', read write binary
 	file seek `out' `pos_out'
-	if "`nvar'"==""{
-		file sersetread `out'
-		serset
-		*local nobs = `r(N)'
-		local nvar = `r(k)'
-		serset drop
-		file seek `out' `pos_out'
-	}
-	zero_padding `out' 26
 	
-	file seek `out' `=`pos_out'+26+`nvar''
+	file seek `out' `=`pos_out'+18'
+	file read `out' %4bu `k_vars'
+	file read `out' %4bu `n_obs'
+	file seek `out' `=`pos_out'+26+`=`k_vars'''
 	
-	forval i=1/`nvar'{
+	forval i=1/`=`k_vars''{
 		zero_padding `out' `=cond(`vers'==3,54,150)'
 	}
-	forval i=1/`nvar'{
+	forval i=1/`=`k_vars''{
 		zero_padding `out' `=cond(`vers'==3,49,57)'
 	}
 	

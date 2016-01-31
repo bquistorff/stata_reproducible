@@ -1,16 +1,24 @@
-*TODO: only do for PDFs. Check on the Lib Haru (PDF-1.6)
+*NB: only needed for PDFs for version 13 (and therefore Win).
 program graph_export
-	syntax anything(name=filename) [, *]
+	syntax anything(name=filename) [, as(string) *]
+		
+	graph export `filename', as(`as') `options'
 	
-	graph export `filename', `options'
-	
+	if regexm(`"`filename'"',"\.[a-zA-Z0-9]*$") local ext = regexs(0)
+	local fmt = cond("`as'"!="","`as'","`ext'")
+	if "`fmt'"=="pdf"{
+		strip_nondeterminism_pdf `filename'
+	}
+end
+
+program strip_nondeterminism_pdf
+	args filename
 	tempname fhandle
 	file open `fhandle' using `filename', read write text
 	file read `fhandle' line
 	local rstatus = "`r(status)'"
 	local nl_len = cond("`rstatus'"=="win",2,1)
-
-	if "`line'"!="%PDF-1.5"{ //only works on JagPDF (on Stata 13)
+	if "`line'"!="%PDF-1.5"{ //only works on JagPDF (on Stata 13 Win)
 		file close `fhandle'
 		exit
 	}
