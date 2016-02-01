@@ -7,6 +7,7 @@
 program saver
 	syntax anything [, noDATAsig noCOMPress noREPROducible VERsion(string) *]
 	
+	_assert inlist("`version'","","13","14"), msg("Can only save as older from v14 to v13")
 	if "`compress'"!="nocompress" compress
 	
 	if "`datasig'"!="nodatasig" {

@@ -1,3 +1,4 @@
--allow converting gph v4 -> gph v3
--check if I need to zero out gph parts?
--Should I be able to handle 8byte integers (long long)?
+-write help
+-check if I really need to zero out gph serset parts (including string ends)? Can strLs be in sersets?
+-Should I be able to handle 8byte integers (long long) in the v14 dta format.
+-Allow hilo instead of just lohi byteorder
