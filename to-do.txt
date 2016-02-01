@@ -1,4 +1,5 @@
 -write help
+-Make sure I handle filenames unquoted/quoted correctly
 -check if I really need to zero out gph serset parts (including string ends)? Can strLs be in sersets?
 -Should I be able to handle 8byte integers (long long) in the v14 dta format.
 -Allow hilo instead of just lohi byteorder

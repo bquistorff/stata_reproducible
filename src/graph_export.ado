@@ -4,7 +4,7 @@ program graph_export
 		
 	graph export `filename', as(`as') `options'
 	
-	if regexm(`"`filename'"',"\.([a-zA-Z0-9]*)$") local ext = regexs(1)
+	if regexm(`"`filename'"',`"\.([a-zA-Z0-9]*)"?$"') local ext = regexs(1)
 	local fmt = cond("`as'"!="","`as'","`ext'")
 	if "`fmt'"=="pdf"{
 		strip_nondeterminism_pdf `filename'
