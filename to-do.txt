@@ -1,2 +1,3 @@
 -allow converting gph v4 -> gph v3
--SOURCE_DATE_EPOCH
+-check if I need to zero out gph parts?
+-Should I be able to handle 8byte integers (long long)?

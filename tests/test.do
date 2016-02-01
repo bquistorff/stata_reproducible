@@ -6,7 +6,6 @@ include preferences.do
 
 local main_version = substr("`c(stata_version)'",1,2)
 sysuse auto, clear
-drop make //string variable and I don't normalize those
 
 * Export platform-version specific versions
 * This is to see all the differences
@@ -19,7 +18,7 @@ graph save raw/scatter-v`main_version'-`c(os)'-raw.gph, replace
 graph_save scatter-v`main_version'.gph, replace
 
 graph_export scatter-v`main_version'-`c(os)'.eps, replace
-*Can't export to PDF on Unix for version <14
+*Can't export to PDF on Unix for version <14 (sometimes Unix v14, but not always)
 cap noi graph_export scatter-v`main_version'-`c(os)'.pdf, replace
 
 * Now simulate a workflow to get canonical versions

@@ -1,4 +1,3 @@
-*TODO: SOURCE_DATE_EPOCH
 *Can't read/write in place because sometimes the identfiers are different length
 *NB: -version- does not affect graph saving/exporting
 program graph_save

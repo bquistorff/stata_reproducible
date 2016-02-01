@@ -16,3 +16,4 @@ If I can convert gph v4 -> v3 then if in a project with mixed versions (13 & 14)
 * PDFs are different across platforms and versions
 ** v13-win uses JagPDF 1.4.0 (http://jagpdf.org) making PDF 1.5 docs
 ** v14-win & v14-unix uses Haru Free PDF Library 2.4.0dev. On Unix makes PDF-1.3 and on Windows PDF-1.6.
+* The fixed dates are 2013-07-10 14:23:00 (random date found from another file), if you want to change that you can search for 2013 as well as datasignature_dt in -saver-.

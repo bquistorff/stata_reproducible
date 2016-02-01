@@ -1,7 +1,7 @@
 *! version 0.0.8 Brian Quistorff <bquistorff@gmail.com>
 *! Makes dta files reproducible by removing any non-determinism
 *! (e.g. timestamps, randomness). Plus a few helper options.
-*TODO: SOURCE_DATE_EPOCH
+*NB: If you want to speed up, then don't include strF's
 *NB: Using -version 13: save ...- will produce a different sized file than -save ...-
 *   Because things like characteristics, which are variable length, will differ.
 program saver
@@ -11,8 +11,8 @@ program saver
 	
 	if "`datasig'"!="nodatasig" {
 		datasig set, reset
-		*%tc date-time when set in %21x format
-		char _dta[datasignature_dt] "+1.9bf54c4900000X+028"
+		*di %21x Cmdyhms(07,10,2013,14,23,00)
+		char _dta[datasignature_dt] "+1.894555e748000X+028"
 	}
 	
 	cap unab temp: _*
@@ -33,7 +33,7 @@ end
 program strip_nodeterminism_dta
 	args filename
 	
-	tempname fhandle k lbl_len additional time_len char_len val_lbl_len
+	tempname fhandle k N lbl_len additional time_len char_len val_lbl_len
 	
 	file open `fhandle' using `filename', read write binary
 	
@@ -50,6 +50,13 @@ program strip_nodeterminism_dta
 	file seek `fhandle' 70
 	file read  `fhandle' %2bu `k'
 	
+	file seek `fhandle' 79
+	if `ver_str'==117 file read  `fhandle' %4bu `N'
+	else{
+		read_8byte_integer `fhandle', local(N_lcl)
+		scalar `N' = `N_lcl'
+	}
+	
 	file seek `fhandle' `=cond(`ver_str'==117,94,98)'
 	if `ver_str'==117 file read  `fhandle' %1bu `lbl_len'
 	else              file read  `fhandle' %2bu `lbl_len'
@@ -60,7 +67,6 @@ program strip_nodeterminism_dta
 	scalar `additional' = `additional'+`time_len'
 	
 	if `time_len'==17{ //otherwise=0
-		*read SOURCE_DATE_EPOCH () https://reproducible-builds.org/specs/source-date-epoch/
 		file write `fhandle' %17s "10 Jul 2013 14:23"
 	}
 	
@@ -79,6 +85,48 @@ program strip_nodeterminism_dta
 	read_8byte_integer `fhandle', local(value_labels)
 	*read_8byte_integer `fhandle', local(end_ds)
 	*read_8byte_integer `fhandle', local(eof)
+	
+	file seek `fhandle' `=`variable_types'+14+2'
+	tempname vartype
+	forval i=1/`=`k''{
+		file read `fhandle' %2bu `vartype'
+		if `=`vartype'' <=2045{
+			local vsizes "`vsizes' `=`vartype''"
+			local isstrs "`isstrs' 1"
+		}
+		else{
+			if `=`vartype''== 32768 local vsizes "`vsizes' 8"
+			if `=`vartype''== 65526 local vsizes "`vsizes' 8"
+			if `=`vartype''== 65527 local vsizes "`vsizes' 4"
+			if `=`vartype''== 65528 local vsizes "`vsizes' 4"
+			if `=`vartype''== 65529 local vsizes "`vsizes' 2"
+			if `=`vartype''== 65530 local vsizes "`vsizes' 1"
+			local isstrs "`isstrs' 0"
+		}
+	}
+	*consolidate non-strF fields
+	forval i=1/`=`k''{
+		local curr_isstr : word `i' of `isstrs'
+		local curr_size  : word `i' of `vsizes'
+		
+		if `curr_isstr'{
+			if "`prev_nonstr_size'"!=""{
+				local isstrs2 "`isstrs2' 0"
+				local vsizes2 "`vsizes2' `prev_nonstr_size'"
+			}
+			local isstrs2 "`isstrs2' 1"
+			local vsizes2 "`vsizes2' `curr_size'"
+			local prev_nonstr_size ""
+		}
+		else{
+			if "`prev_nonstr_size'"=="" local prev_nonstr_size  `curr_size'
+			else    local prev_nonstr_size = `prev_nonstr_size'+`curr_size'
+			if `i'==`=`k''{
+				local isstrs2 "`isstrs2' 0"
+				local vsizes2 "`vsizes2' `prev_nonstr_size'"			
+			}
+		}
+	}
 	
 	file seek `fhandle' `=`varnames'+8+2'
 	forval i=1/`=`k''{
@@ -112,6 +160,26 @@ program strip_nodeterminism_dta
 		zero_padding `fhandle' `=`char_len'-2*`vname_len''
 		file read  `fhandle' %5s next_chunk //end of last tag
 		file read  `fhandle' %4s next_chunk
+	}
+	
+	file seek `fhandle' `=`data'+4+2'
+	if "`isstrs2'"!="0"{
+		local curr_pos = `=`data''+4+2
+		local vsizes2_len : list sizeof vsizes2
+		forval i=1/`=`N''{
+			forval j=1/`vsizes2_len'{
+				local isstr : word `j' of `isstrs2'
+				local vsize  : word `j' of `vsizes2'
+				
+				if `isstr'{
+					zero_padding `fhandle' `vsize'
+				}
+				else{
+					file seek `fhandle' `=`curr_pos'+`vsize''
+				}
+				local curr_pos=`curr_pos'+`vsize'
+			}	
+		}
 	}
 	
 	*Nothing to do in strls

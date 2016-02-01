@@ -4,7 +4,7 @@ program graph_export
 		
 	graph export `filename', as(`as') `options'
 	
-	if regexm(`"`filename'"',"\.[a-zA-Z0-9]*$") local ext = regexs(0)
+	if regexm(`"`filename'"',"\.([a-zA-Z0-9]*)$") local ext = regexs(1)
 	local fmt = cond("`as'"!="","`as'","`ext'")
 	if "`fmt'"=="pdf"{
 		strip_nondeterminism_pdf `filename'
@@ -46,6 +46,7 @@ program strip_nondeterminism_pdf
 		local pos2 = strpos(`"`macval(line)'"',"/ID[<")
 		if `pos2'>0{
 			file seek `fhandle' `=`pos'-`len'+`pos2'-`nl_len'+4'
+			*Totally random ID
 			file write `fhandle' "0A3CB2BE6CA192C50EDBD15A1258B512> <0A3CB2BE6CA192C50EDBD15A1258B512"
 		}
 		
