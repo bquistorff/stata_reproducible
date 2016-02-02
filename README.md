@@ -1,4 +1,4 @@
-# stata-reproducible
+# stata_reproducible
 Tools to make output from Stata reproducible (byte-identical). This helps with committing generated (intermediate or final) files under version control.
 
 # Usage:
@@ -6,6 +6,18 @@ If you are using Stata 13 or Stata 14 (and no others) use the same version of St
 - dta and gph: Commit them and any computer rebuild them. Use -saver-, -graph_save-, -graph_export- instead of the standard commands.
   - If using Stata 13 and 14 then use -saver ..., version(13)- and -graph_save ..., version(13)- or set DTA_DEFAULT_VERSION and GPH_DEFAULT_VERSION.
 - eps and pdf: Only build on one platform-version and commit those files. You can turn off eps/pdf exporting on certain platforms by setting $OMIT_FIG_EXPORT and using save_all_figs.ado (a project-level ado, which you can edit easily). If another platform commits new gphs, you can regenerate eps/pdf files from gph files on the main platform by using the project-level gen_ext_from_gph.do.
+
+# Installation:
+With Stata version 13 or later:
+```Stata
+. net install stata_reproducible, from(https://raw.github.com/bquistorff/stata_reproducible/master/) replace
+```
+
+For Stata version <13, download as zip, unzip, and then replace the above -net install- with
+
+```Stata
+. net install stata_reproducible, from(full_local_path_to_files) replace
+```
 
 ## Notes
 - dta and gph files are different across versions (and bit order, but if staying on Windows, Linux, and modern PC, this shouldn't be problem). You can use -, version(13)- on v14 and the files will be identical to one on v13. I've added this feature to the gph files.

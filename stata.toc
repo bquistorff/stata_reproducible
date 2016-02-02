@@ -1,0 +1,4 @@
+v 3
+d stata_reproducible Stata module for reproducible output
+
+p stata_reproducible Stata module for reproducible output

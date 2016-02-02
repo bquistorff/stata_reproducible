@@ -4,10 +4,17 @@ program graph_save
 	syntax anything [, asis * version(string)]
 	_assert "`asis'"=="", msg("Can not parse asis graphs")
 	_assert inlist("`version'","","13","14"), msg("Can only graph_save as older from v14 to v13")
-	gettoken first second : anything
-	local filename = cond("`second'"=="","`first'", "`second'")
 	
-	graph save `anything' , `options'
+	gettoken first second : anything
+	if "`second'"!=""{
+		local gphname `first'
+		local filename `second'
+	}
+	else{
+		local filename `first'
+	}
+	
+	graph save `gphname' "`filename'" , `options'
 	if "`version'"=="" local version $GPH_DEFAULT_VERSION
 	if ("`version'"=="13" & `c(stata_version)'>=14) local old13 old13
 	strip_nodeterminism_gph `filename', `old13'
@@ -17,8 +24,8 @@ program strip_nodeterminism_gph
 	syntax anything(name=filename) [, old13]
 	
 	tempname in out
-	file open `in' using `filename', read text
-	file open `out' using `filename'.nor, write text replace
+	file open `in' using "`filename'", read text
+	file open `out' using "`filename'.nor", write text replace
 	file read  `in'    line //Stata 13 & 14 say same
 	file write `out' "`line'`=char(10)'" //char(10) is line-feed (\n). This is a Unix line ending
 	file read  `in'    line //13 & 14 differ
@@ -40,9 +47,9 @@ program strip_nodeterminism_gph
 	local date_time ="`date' `time_rough'"
 	
 	while 1{
-		file open `in' using `filename', read text
+		file open `in' using "`filename'", read text
 		file seek `in' `pos'
-		file open `out' using `filename'.nor, write text append
+		file open `out' using "`filename'.nor", write text append
 		file read `in' line
 		while `"`line'"'!="<BeginSersetData>" & r(eof)==0{
 			
@@ -75,7 +82,7 @@ program strip_nodeterminism_gph
 		file close `in'
 		
 		file close `out'
-		file open `out' using `filename'.nor, read text
+		file open `out' using "`filename'.nor", read text
 		file seek `out' eof
 		file seek `out' query 
 		local pass_off_pos_out = r(loc)
@@ -92,8 +99,8 @@ program strip_nodeterminism_gph
 	
 	file close `in'
 	file close `out'
-	copy `filename'.nor `filename', replace
-	erase `filename'.nor
+	copy "`filename'.nor" "`filename'", replace
+	erase "`filename'.nor"
 end
 
 program write_serset13_from_serset14
@@ -101,8 +108,8 @@ program write_serset13_from_serset14
 	gettoken pos pos_out: anything
 	
 	tempname in out n_obs k_var vartype
-	file open `in' using `filename_in', read binary
-	file open `out' using `filename_out', write append binary
+	file open `in' using "`filename_in'", read binary
+	file open `out' using "`filename_out'", write append binary
 	
 	file seek `in' `=`pos'+18'
 	file write `out' %15s "sersetreadwrite"
@@ -189,7 +196,7 @@ program copy_serset
 	
 	*Get the outline of the serset from Stata rather than parsing ourselves
 	*Could parse the <series> tags above, but this is easier
-	file open `in' using `filename_in', read binary
+	file open `in' using "`filename_in'", read binary
 	file seek `in' `pos'
 	file sersetread `in'
 	file seek `in' query 
@@ -197,7 +204,7 @@ program copy_serset
 	file close `in'
 	c_local `pass_of_local'     `pass_off_pos'
 	
-	file open `out' using `filename_out', write append binary
+	file open `out' using "`filename_out'", write append binary
 	file sersetwrite `out'
 	file close `out'
 	serset drop
@@ -207,7 +214,7 @@ end
 program strip_nodeterminism_serset
 	syntax , filename_out(string) pos_out(int) vers(int)
 	tempname out k_vars n_obs
-	file open `out' using `filename_out', read write binary
+	file open `out' using "`filename_out'", read write binary
 	file seek `out' `pos_out'
 	
 	file seek `out' `=`pos_out'+18'

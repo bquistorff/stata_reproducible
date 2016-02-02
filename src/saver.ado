@@ -5,9 +5,10 @@
 *NB: Using -version 13: save ...- will produce a different sized file than -save ...-
 *   Because things like characteristics, which are variable length, will differ.
 program saver
-	syntax anything [, noDATAsig noCOMPress noREPROducible VERsion(string) *]
-	
+	syntax anything(name=filename) [, noDATAsig noCOMPress noREPROducible VERsion(string) *]
+	local filename `filename' //remove quotes if any
 	_assert inlist("`version'","","13","14"), msg("Can only save as older from v14 to v13")
+	
 	if "`compress'"!="nocompress" compress
 	
 	if "`datasig'"!="nodatasig" {
@@ -21,13 +22,13 @@ program saver
 	
 	if "`version'"=="" local version $DTA_DEFAULT_VERSION
 	if "`version'"=="13" & `c(stata_version)'>=14{
-		saveold `anything', `options' version(`version')
+		saveold "`filename'", `options' version(`version')
 	}
 	else{
-		save `anything', `options'
+		save "`filename'", `options'
 	}
 	
-	if ("`reproducible'"!="noreproducible") strip_nodeterminism_dta `anything'
+	if ("`reproducible'"!="noreproducible") strip_nodeterminism_dta "`filename'"
 
 end
 
@@ -36,7 +37,7 @@ program strip_nodeterminism_dta
 	
 	tempname fhandle k N lbl_len additional time_len char_len val_lbl_len
 	
-	file open `fhandle' using `filename', read write binary
+	file open `fhandle' using "`filename'", read write binary
 	
 	file seek `fhandle' 28
 	file read  `fhandle' %3s ver_str
