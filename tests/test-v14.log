@@ -38,17 +38,17 @@
 . 
 . qui save raw/auto-v`main_version'-raw.dta, replace
 
+. if `main_version'==14 qui saver auto-v13-from-v14.dta, replace version(13)
+
 . saver auto.dta, replace version(`main_version') //so graphs have same dataset location
   (0 bytes saved)
-  74:12(71728):2155345365:1865188037       (data signature set)
+  74:12(71728):2155345365:1865188037       (data signature reset)
 (note: file auto.dta not found)
 file auto.dta saved
 
 . copy auto.dta auto-v`main_version'.dta, replace
 
 . erase auto.dta
-
-. if `main_version'==14 qui saver auto-v13-from-v14.dta, replace version(13)
 
 . 
 . twoway (scatter mpg price), title("Title") note("Notes") //has to go after save as data path written

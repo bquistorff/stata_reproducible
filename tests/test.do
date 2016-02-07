@@ -26,10 +26,10 @@ compress
 local main_version = substr("`c(stata_version)'",1,2)
 
 qui save raw/auto-v`main_version'-raw.dta, replace
+if `main_version'==14 qui saver auto-v13-from-v14.dta, replace version(13)
 saver auto.dta, replace version(`main_version') //so graphs have same dataset location
 copy auto.dta auto-v`main_version'.dta, replace
 erase auto.dta
-if `main_version'==14 qui saver auto-v13-from-v14.dta, replace version(13)
 
 twoway (scatter mpg price), title("Title") note("Notes") //has to go after save as data path written
 qui graph save raw/scatter-v`main_version'-`c(os)'-raw.gph, replace
