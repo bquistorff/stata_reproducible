@@ -1,0 +1,166 @@
+{smcl}
+{com}{sf}{ul off}{txt}{.-}
+      name:  {res}test_smcl
+       {txt}log:  {res}-PWD-/log/test.smcl
+  {txt}log type:  {res}smcl
+ {txt}opened on:  {res}-normalized-
+{txt}
+{com}. 
+. *Final checks:
+. *   auto-v13.dta=   auto-v13-from-v14.dta
+. *scatter-v13.gph=scatter-v13-from-v14.gph
+. 
+. sysuse auto, clear
+{txt}(1978 Automobile Data)
+
+{com}. compress
+  mpg was int now byte
+  rep78 was int now byte
+  trunk was int now byte
+  turn was int now byte
+  make was str18 now str17
+{txt}  (370 bytes saved)
+
+{com}. 
+. *Use -quiet- before commands that display differently on different platforms 
+. * (e.g. use OMIT_FIG_EXP or use `main_version')
+. 
+. ******** Export platform-version specific versions ********
+. * This is to see all the differences. Be specific about versions
+. local main_version = substr("`c(stata_version)'",1,2)
+{txt}
+{com}. 
+. qui save raw/auto-v`main_version'-raw.dta, replace
+{txt}
+{com}. saver auto.dta, replace version(`main_version') //so graphs have same dataset location
+{txt}  (0 bytes saved)
+{res}  74:12(71728):2155345365:1865188037       {txt}(data signature set)
+(note: file auto.dta not found)
+file auto.dta saved
+
+{com}. copy auto.dta auto-v`main_version'.dta, replace
+{txt}
+{com}. erase auto.dta
+{txt}
+{com}. if `main_version'==14 qui saver auto-v13-from-v14.dta, replace version(13)
+{txt}
+{com}. 
+. twoway (scatter mpg price), title("Title") note("Notes") //has to go after save as data path written
+{res}{txt}
+{com}. qui graph save raw/scatter-v`main_version'-`c(os)'-raw.gph, replace
+{txt}
+{com}. if `main_version'==14 qui graph_save scatter-v13-from-v14.gph, replace version(13)
+{txt}
+{com}. qui graph_save scatter-v`main_version'.gph, replace version(`main_version')
+{txt}
+{com}. 
+. qui graph_export scatter-v`main_version'-`c(os)'.eps, replace
+{txt}
+{com}. *Can't export to PDF on Unix for version <14 (sometimes Unix v14, but not always)
+. cap /*noi*/ graph_export scatter-v`main_version'-`c(os)'.pdf, replace
+{txt}
+{com}. 
+. ******** Simulate a workflow to get canonical versions **********
+. saver data/auto.dta, replace
+{txt}  (0 bytes saved)
+{res}  74:12(71728):2155345365:1865188037       {txt}(data signature reset)
+file data/auto.dta saved
+
+{com}. qui save_all_figs scatter
+{txt}
+{com}. 
+. *If another platform updates gphs,then run this
+. if "$OMIT_FIG_EXPORT"=="0"{c -(}
+.         qui do gen_ext_from_gph.do
+. {c )-}
+{txt}
+{com}. 
+. 
+. ******** Check that everything wrote fine ********
+. if `main_version'==14{c -(}
+.         qui use auto-v14.dta, replace
+.         qui graph use scatter-v14.gph, nodraw
+. {c )-}
+{txt}
+{com}. use auto-v13.dta, replace
+{txt}(1978 Automobile Data)
+
+{com}. use auto-v13-from-v14.dta, replace
+{txt}(1978 Automobile Data)
+
+{com}. graph use scatter-v13.gph, nodraw
+{res}{txt}
+{com}. graph use scatter-v13-from-v14.gph, nodraw
+{res}{txt}
+{com}. 
+. ******* Check the log normalization **************
+. local main_version ""
+{txt}
+{com}. global OMIT_FIG_EXPORT ""
+{txt}
+{com}. display_run_specs /*creturn list has too many things to null out*/
+Flavor = -normalized-
+               {txt}Revision = {res}-normalized-
+c(os) = -normalized-
+c(osdtl) = -normalized-
+c(machine_type) = -normalized-
+c(byteorder) = -normalized-
+            {txt}c(hostname) = -normalized-
+                 {txt}c(pwd) = {res}"-PWD-"
+c(stata_version) = -normalized-
+c(processors) = -normalized-
+{txt}
+{com}. mac dir
+{txt}{p 0 16}
+S_FNDATE:{space 7}{res}{res}-normalized-
+{p_end}
+{txt}{p 0 16}
+S_FN:-normalized-
+{p_end}
+{txt}{p 0 16}
+T_gm_fix_span:{space 2}{res}{res}0
+{p_end}
+{txt}{p 0 16}
+S_ADO:-normalized-
+{p_end}
+{txt}{p 0 16}
+GPH_DEFAULT_VERSION:{break}
+{res}13
+{p_end}
+{txt}{p 0 16}
+DTA_DEFAULT_VERSION:{break}
+{res}13
+{p_end}
+{txt}{p 0 16}
+S_FLAVOR:-normalized-
+{p_end}
+{txt}{p 0 16}
+S_OS:-normalized-
+{p_end}
+{txt}{p 0 16}
+S_MACH:-normalized-
+{p_end}
+{txt}
+{com}. tempfile tfile
+{txt}
+{com}. save `tfile'
+{txt}file -TMPDIR-/-tempfile- saved
+
+{com}. 
+. *set trace on
+. log_close test_log, raw_dir(raw)
+      {txt}name:  {res}test_log
+       {txt}log:  {res}-PWD-/log/test.log
+  {txt}log type:  {res}text
+ {txt}closed on:  {res}-normalized-
+{txt}{.-}
+(note: file raw/test.log not found)
+{res}{txt}
+{com}. log_close test_smcl, raw_dir(raw)
+      {txt}name:  {res}test_smcl
+       {txt}log:  {res}-PWD-/log/test.smcl
+  {txt}log type:  {res}smcl
+ {txt}closed on:  {res}-normalized-
+{txt}{.-}
+{smcl}
+{txt}{sf}{ul off}

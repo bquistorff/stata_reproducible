@@ -1,0 +1,144 @@
+-----------------------------------------------------------
+      name:  test_log
+       log:  -PWD-/log/test.log
+  log type:  text
+ opened on:  -normalized-
+
+. log using log/test.smcl, replace name(test_smcl)
+-----------------------------------------------------------
+      name:  test_smcl
+       log:  -PWD-/log/test.smcl
+  log type:  smcl
+ opened on:  -normalized-
+
+. 
+. *Final checks:
+. *   auto-v13.dta=   auto-v13-from-v14.dta
+. *scatter-v13.gph=scatter-v13-from-v14.gph
+. 
+. sysuse auto, clear
+(1978 Automobile Data)
+
+. compress
+  mpg was int now byte
+  rep78 was int now byte
+  trunk was int now byte
+  turn was int now byte
+  make was str18 now str17
+  (370 bytes saved)
+
+. 
+. *Use -quiet- before commands that display differently on different platforms 
+. * (e.g. use OMIT_FIG_EXP or use `main_version')
+. 
+. ******** Export platform-version specific versions ********
+. * This is to see all the differences. Be specific about versions
+. local main_version = substr("`c(stata_version)'",1,2)
+
+. 
+. qui save raw/auto-v`main_version'-raw.dta, replace
+
+. saver auto.dta, replace version(`main_version') //so graphs have same dataset location
+  (0 bytes saved)
+  74:12(71728):2155345365:1865188037       (data signature set)
+(note: file auto.dta not found)
+file auto.dta saved
+
+. copy auto.dta auto-v`main_version'.dta, replace
+
+. erase auto.dta
+
+. if `main_version'==14 qui saver auto-v13-from-v14.dta, replace version(13)
+
+. 
+. twoway (scatter mpg price), title("Title") note("Notes") //has to go after save as data path written
+
+. qui graph save raw/scatter-v`main_version'-`c(os)'-raw.gph, replace
+
+. if `main_version'==14 qui graph_save scatter-v13-from-v14.gph, replace version(13)
+
+. qui graph_save scatter-v`main_version'.gph, replace version(`main_version')
+
+. 
+. qui graph_export scatter-v`main_version'-`c(os)'.eps, replace
+
+. *Can't export to PDF on Unix for version <14 (sometimes Unix v14, but not always)
+. cap /*noi*/ graph_export scatter-v`main_version'-`c(os)'.pdf, replace
+
+. 
+. ******** Simulate a workflow to get canonical versions **********
+. saver data/auto.dta, replace
+  (0 bytes saved)
+  74:12(71728):2155345365:1865188037       (data signature reset)
+file data/auto.dta saved
+
+. qui save_all_figs scatter
+
+. 
+. *If another platform updates gphs,then run this
+. if "$OMIT_FIG_EXPORT"=="0"{
+.         qui do gen_ext_from_gph.do
+. }
+
+. 
+. 
+. ******** Check that everything wrote fine ********
+. if `main_version'==14{
+.         qui use auto-v14.dta, replace
+.         qui graph use scatter-v14.gph, nodraw
+. }
+
+. use auto-v13.dta, replace
+(1978 Automobile Data)
+
+. use auto-v13-from-v14.dta, replace
+(1978 Automobile Data)
+
+. graph use scatter-v13.gph, nodraw
+
+. graph use scatter-v13-from-v14.gph, nodraw
+
+. 
+. ******* Check the log normalization **************
+. local main_version ""
+
+. global OMIT_FIG_EXPORT ""
+
+. display_run_specs /*creturn list has too many things to null out*/
+Flavor = -normalized-
+               Revision = -normalized-
+c(os) = -normalized-
+c(osdtl) = -normalized-
+c(machine_type) = -normalized-
+c(byteorder) = -normalized-
+            c(hostname) = -normalized-
+                 c(pwd) = "-PWD-"
+c(stata_version) = -normalized-
+c(processors) = -normalized-
+
+. mac dir
+S_FNDATE:       -normalized-
+S_FN:           -normalized-
+T_gm_fix_span:  0
+S_ADO:          -normalized-
+GPH_DEFAULT_VERSION:
+                13
+DTA_DEFAULT_VERSION:
+                13
+S_FLAVOR:       -normalized-
+S_OS:           -normalized-
+S_MACH:         -normalized-
+
+. tempfile tfile
+
+. save `tfile'
+file -TMPDIR-/-tempfile- saved
+
+. 
+. *set trace on
+. log_close test_log, raw_dir(raw)
+      name:  test_log
+       log:  -PWD-/log/test.log
+  log type:  text
+ closed on:  -normalized-
+-----------------------------------------------------------
