@@ -34,7 +34,7 @@
 {txt}
 {com}. if `main_version'==14 qui saver auto-v13-from-v14.dta, replace version(13)
 {txt}
-{com}. saver auto.dta, replace version(`main_version') //so graphs have same dataset location
+{com}. saver auto.dta, replace version(`main_version') post_check //so graphs have same dataset location
 {txt}  (0 bytes saved)
 {res}  74:12(71728):2155345365:1865188037       {txt}(data signature set)
 (note: file auto.dta not found)
@@ -77,22 +77,20 @@ file data/auto.dta saved
 {com}. 
 . 
 . ******** Check that everything wrote fine ********
-. if `main_version'==14{c -(}
-.         qui use auto-v14.dta, replace
-.         qui graph use scatter-v14.gph, nodraw
-. {c )-}
+. foreach dta in auto-v13.dta auto-v13-from-v14.dta `=cond(`main_version'==14,"auto-v14.dta","")' {c -(}
+{txt}  2{com}.         qui use `dta', clear
+{txt}  3{com}.         qui datasignature confirm
+{txt}  4{com}. {c )-}
 {txt}
-{com}. use auto-v13.dta, replace
-{txt}(1978 Automobile Data)
-
-{com}. use auto-v13-from-v14.dta, replace
-{txt}(1978 Automobile Data)
-
-{com}. graph use scatter-v13.gph, nodraw
+{com}. 
+. graph use scatter-v13.gph, nodraw
 {res}{txt}
 {com}. graph use scatter-v13-from-v14.gph, nodraw
 {res}{txt}
+{com}. if `main_version'==14 qui graph use scatter-v14.gph, nodraw
+{txt}
 {com}. 
+. 
 . ******* Check the log normalization **************
 . local main_version ""
 {txt}

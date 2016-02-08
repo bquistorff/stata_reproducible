@@ -4,8 +4,12 @@
 *NB: If you want to speed up, then don't include strF's
 *NB: Using -version 13: save ...- will produce a different sized file than -save ...-
 *   Because things like characteristics, which are variable length, will differ.
+* Don't use preserve/restore in here as that swaps the order of chars (and can 
+* affect how they are written). 
+* Does this happen for other fields (e.g. val labels)?
+* I coud sort the chars alaphabetically before writting
 program saver
-	syntax anything(name=filename) [, noDATAsig noCOMPress noREPROducible VERsion(string) *]
+	syntax anything(name=filename) [, noDATAsig noCOMPress VERsion(string) POST_check *]
 	local filename `filename' //remove quotes if any
 	_assert inlist("`version'","","13","14"), msg("Can only save as older from v14 to v13")
 	
@@ -13,6 +17,7 @@ program saver
 	
 	if "`datasig'"!="nodatasig" {
 		datasig set, reset
+		local datas1 "`r(datasignature)'"
 		*di %21x Cmdyhms(07,10,2013,14,23,00)
 		char _dta[datasignature_dt] "+1.894555e748000X+028"
 	}
@@ -28,7 +33,7 @@ program saver
 		save "`filename'", `options'
 	}
 	
-	if ("`reproducible'"!="noreproducible") strip_nodeterminism_dta "`filename'"
+	strip_nodeterminism_dta "`filename'"
 
 end
 

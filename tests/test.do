@@ -27,7 +27,7 @@ local main_version = substr("`c(stata_version)'",1,2)
 
 qui save raw/auto-v`main_version'-raw.dta, replace
 if `main_version'==14 qui saver auto-v13-from-v14.dta, replace version(13)
-saver auto.dta, replace version(`main_version') //so graphs have same dataset location
+saver auto.dta, replace version(`main_version') post_check //so graphs have same dataset location
 copy auto.dta auto-v`main_version'.dta, replace
 erase auto.dta
 
@@ -51,14 +51,15 @@ if "$OMIT_FIG_EXPORT"=="0"{
 
 
 ******** Check that everything wrote fine ********
-if `main_version'==14{
-	qui use auto-v14.dta, replace
-	qui graph use scatter-v14.gph, nodraw
+foreach dta in auto-v13.dta auto-v13-from-v14.dta `=cond(`main_version'==14,"auto-v14.dta","")' {
+	qui use `dta', clear
+	qui datasignature confirm
 }
-use auto-v13.dta, replace
-use auto-v13-from-v14.dta, replace
+
 graph use scatter-v13.gph, nodraw
 graph use scatter-v13-from-v14.gph, nodraw
+if `main_version'==14 qui graph use scatter-v14.gph, nodraw
+
 
 ******* Check the log normalization **************
 local main_version ""
