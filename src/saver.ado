@@ -9,7 +9,7 @@
 * Does this happen for other fields (e.g. val labels)?
 * I coud sort the chars alaphabetically before writting
 program saver
-	syntax anything(name=filename) [, noDATAsig noCOMPress VERsion(string) POST_check *]
+	syntax anything(name=filename) [, noDATAsig noCOMPress VERsion(string) *]
 	local filename `filename' //remove quotes if any
 	_assert inlist("`version'","","13","14"), msg("Can only save as older from v14 to v13")
 	

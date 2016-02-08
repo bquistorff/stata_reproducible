@@ -27,7 +27,8 @@ local main_version = substr("`c(stata_version)'",1,2)
 
 qui save raw/auto-v`main_version'-raw.dta, replace
 if `main_version'==14 qui saver auto-v13-from-v14.dta, replace version(13)
-saver auto.dta, replace version(`main_version') post_check //so graphs have same dataset location
+*qui below because v13 vs v14 will show "data sig. set" vers "reset"
+qui saver auto.dta, replace version(`main_version') //so graphs have same dataset location. 
 copy auto.dta auto-v`main_version'.dta, replace
 erase auto.dta
 

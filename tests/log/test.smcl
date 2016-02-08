@@ -34,12 +34,9 @@
 {txt}
 {com}. if `main_version'==14 qui saver auto-v13-from-v14.dta, replace version(13)
 {txt}
-{com}. saver auto.dta, replace version(`main_version') post_check //so graphs have same dataset location
-{txt}  (0 bytes saved)
-{res}  74:12(71728):2155345365:1865188037       {txt}(data signature set)
-(note: file auto.dta not found)
-file auto.dta saved
-
+{com}. *qui below because v13 vs v14 will show "data sig. set" vers "reset"
+. qui saver auto.dta, replace version(`main_version') //so graphs have same dataset location. 
+{txt}
 {com}. copy auto.dta auto-v`main_version'.dta, replace
 {txt}
 {com}. erase auto.dta
