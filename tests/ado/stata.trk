@@ -1,0 +1,31 @@
+* 00000004
+*! version 1.0.0
+* Do not erase or edit this file
+* It is used by Stata to track the ado and help
+* files you have installed.
+
+S ..
+N stata_reproducible.pkg
+D 15 Feb 2016
+U 4
+d 'stata_reproducible': module
+d 
+d   Tools to make output from Stata reproducible (byte-identical).
+d This helps with committing generated (intermediate or final) files under version control.
+d 
+d Version 0.1
+d 
+d Distribution-Date: 02feb2016
+d 
+d Author: Brian Quistorff
+d Support: email bquistorff@gmail.com
+d 
+f _\_zero_padding.ado
+f g\get_absolute_path_from_relative.ado
+f g\get_relative_path_from_absolute.ado
+f g\graph_exportr.ado
+f g\graph_saver.ado
+f m\make_trk_paths.ado
+f s\saver.ado
+f l\log_closer.ado
+e

@@ -1,6 +1,6 @@
 *Can't read/write in place because sometimes the identfiers are different length
 *NB: -version- does not affect graph saving/exporting
-program graph_save
+program graph_saver
 	syntax anything [, asis * version(string)]
 	_assert "`asis'"=="", msg("Can not parse asis graphs")
 	_assert inlist("`version'","","13","14"), msg("Can only graph_save as older from v14 to v13")
@@ -223,10 +223,10 @@ program strip_nodeterminism_serset
 	file seek `out' `=`pos_out'+26+`=`k_vars'''
 	
 	forval i=1/`=`k_vars''{
-		zero_padding `out' `=cond(`vers'==3,54,150)'
+		_zero_padding `out' `=cond(`vers'==3,54,150)'
 	}
 	forval i=1/`=`k_vars''{
-		zero_padding `out' `=cond(`vers'==3,49,57)'
+		_zero_padding `out' `=cond(`vers'==3,49,57)'
 	}
 	
 	file close `out'

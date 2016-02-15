@@ -1,5 +1,5 @@
 *NB: only needed for PDFs for version 13 (and therefore Win).
-program graph_export
+program graph_exportr
 	syntax anything(name=filename) [, as(string) *]
 	local filename `filename' //remove quotes if any
 		

@@ -1,5 +1,4 @@
-*To Do: Check for 
-program log_close
+program log_closer
 	syntax anything(name=name) [, delete_line_user(string) rw_line_user(string) raw_dir(string)]
 	
 	qui log query `name'
@@ -117,6 +116,7 @@ program strip_nondeterminism_log
 		copy "`filename'" "`raw_dir'/`r(filename)'", replace
 	}
 	
+	local mac_len_subcmd = cond(`c(version)'<14, "length", "strlen")
 	tempname in out
 	file open `in' using "`filename'", text read
 	cap erase "`filename'.nor"
@@ -132,11 +132,11 @@ program strip_nondeterminism_log
 		
 		local whole_line : copy local line
 		local skip_first_read 0
-		mata: st_local("strlen", strofreal(strlen(st_local("line"))))
+		local strlen : `mac_len_subcmd' local line
 		while `strlen'==`c(linesize)' & "`combine'"!=""{
 			file read `in' line
 			local status "`r(status)'"
-			mata: st_local("strlen", strofreal(strlen(st_local("line"))))
+			local strlen : `mac_len_subcmd' local line
 			mata: st_local("line_cont", strofreal(strpos(st_local("line"), "> ")==1))
 			if `line_cont'{
 				mata: st_local("whole_line", st_local("whole_line")+substr(st_local("line"), 3, .))

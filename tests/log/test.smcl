@@ -6,10 +6,52 @@
  {txt}opened on:  {res}-normalized-
 {txt}
 {com}. 
-. *Final checks:
-. *   auto-v13.dta=   auto-v13-from-v14.dta
-. *scatter-v13.gph=scatter-v13-from-v14.gph
-. 
+. ******** Test the stata.trk normalizer *******
+. cap make_trk_paths
+{txt}
+{com}. if `=_rc'==199 {c -(} //doesn't exist
+.         * net {c -(}describe|from|get|install{c )-} don't accept relative paths, so use absolute
+.         net install stata_reproducible, from(`c(pwd)'/../)
+.         *But then stata.trk file can't be committed to VC if used in other places. So make relative
+.         make_trk_paths relative, net_ado(ado/)
+. {c )-}
+{txt}
+{com}. else {c -(} //100 "syntax error" -> Exists
+.         * If you want to reinstall (possibly because of an update), then the following options have problems
+.         * Option 1: Manual reinstall
+.         *   -net install, from(<abs_path> replace- 
+.         *   a nearly identical entry is added to stata.trk since paths don't match and this can cause problems for program tools
+.         * Option 2: Auto-update
+.         *   -adoupdate, update- 
+.         *   fails because -net install- can't take relative. Also errors silently and without setting _rc !!!
+.         *
+.         * Instead, do one of the following:
+.         * Solution 1:
+.         *   -ado uninstall stata_reproducible-
+.         *   Then install as above
+.         * Solution 2: Temporarily convert stata.trk to using absolute paths
+.         make_trk_paths absolute, net_ado(ado/)
+.         adoupdate, update
+{res}{txt}{p 0 7 2}
+(note: {cmd:adoupdate} updates user-written files;
+type -{cmd:update}- to check for updates to official Stata)
+{p_end}
+
+{txt}Checking status of installed packages...
+
+{p 4 8 2}
+{txt}[1] {res:stata_reproducible} at C:\Users\Brian\Documents\GitHub\stata_reproducible:{break}
+installed package is up to date
+{p_end}
+
+{txt}(no packages require updating)
+{com}.         * Or -net install <pkg>, from(<abs_path>) replace 
+.         *   <abs_path> must be normalized to remove any "<dir>/../" like we use above 
+.         *   (FWIW: -get_absolute_path_from_relative- returns this)
+.         make_trk_paths relative, net_ado(ado/)
+. {c )-}
+{txt}
+{com}. 
 . sysuse auto, clear
 {txt}(1978 Automobile Data)
 
@@ -46,15 +88,15 @@
 {res}{txt}
 {com}. qui graph save raw/scatter-v`main_version'-`c(os)'-raw.gph, replace
 {txt}
-{com}. if `main_version'==14 qui graph_save scatter-v13-from-v14.gph, replace version(13)
+{com}. if `main_version'==14 qui graph_saver scatter-v13-from-v14.gph, replace version(13)
 {txt}
-{com}. qui graph_save scatter-v`main_version'.gph, replace version(`main_version')
+{com}. qui graph_saver scatter-v`main_version'.gph, replace version(`main_version')
 {txt}
 {com}. 
-. qui graph_export scatter-v`main_version'-`c(os)'.eps, replace
+. qui graph_exportr scatter-v`main_version'-`c(os)'.eps, replace
 {txt}
 {com}. *Can't export to PDF on Unix for version <14 (sometimes Unix v14, but not always)
-. cap /*noi*/ graph_export scatter-v`main_version'-`c(os)'.pdf, replace
+. cap /*noi*/ graph_exportr scatter-v`main_version'-`c(os)'.pdf, replace
 {txt}
 {com}. 
 . ******** Simulate a workflow to get canonical versions **********
@@ -143,7 +185,7 @@ S_MACH:-normalized-
 
 {com}. 
 . *set trace on
-. log_close test_log, raw_dir(raw)
+. log_closer test_log, raw_dir(raw)
       {txt}name:  {res}test_log
        {txt}log:  {res}-PWD-/log/test.log
   {txt}log type:  {res}text
@@ -151,7 +193,7 @@ S_MACH:-normalized-
 {txt}{.-}
 (note: file raw/test.log not found)
 {res}{txt}
-{com}. log_close test_smcl, raw_dir(raw)
+{com}. log_closer test_smcl, raw_dir(raw)
       {txt}name:  {res}test_smcl
        {txt}log:  {res}-PWD-/log/test.smcl
   {txt}log type:  {res}smcl

@@ -1,5 +1,5 @@
 *Works with UTF-8 strings too (leave default chunk_size=1) since a valid UTF-8 char can't have an internal 0 byte.
-program zero_padding
+program _zero_padding
 	syntax anything [, chunk_size(int 1)]
 	gettoken fhandle total_size : anything
 	tempname charval
