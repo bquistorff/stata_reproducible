@@ -1,11 +1,11 @@
---------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------------------------
       name:  test_log
        log:  -PWD-/log/test.log
   log type:  text
  opened on:  -normalized-
 
 . log using log/test.smcl, replace name(test_smcl)
---------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------------------------
       name:  test_smcl
        log:  -PWD-/log/test.smcl
   log type:  smcl
@@ -38,13 +38,11 @@
 .         * Solution 2: Temporarily convert stata.trk to using absolute paths
 .         make_trk_paths absolute, net_ado(ado/)
 .         adoupdate, update
-(note: adoupdate updates user-written files; type -update- to check for
-       updates to official Stata)
+(note: adoupdate updates user-written files; type -update- to check for updates to official Stata)
 
 Checking status of installed packages...
 
-    [1] stata_reproducible at
-        C:\Users\Brian\Documents\GitHub\stata_reproducible:
+    [1] stata_reproducible at -PROJ_BASE-:
         installed package is up to date
 
 (no packages require updating)
@@ -154,6 +152,7 @@ c(processors) = -normalized-
 S_FNDATE:       -normalized-
 S_FN:           -normalized-
 T_gm_fix_span:  0
+PROJ_ROOT:      -PROJ_BASE-/
 S_ADO:          -normalized-
 GPH_DEFAULT_VERSION:
                 13
@@ -162,6 +161,7 @@ DTA_DEFAULT_VERSION:
 S_FLAVOR:       -normalized-
 S_OS:           -normalized-
 S_MACH:         -normalized-
+_pwd:           -PWD-
 
 . tempfile tfile
 
@@ -170,9 +170,9 @@ file -TMPDIR-/-tempfile- saved
 
 . 
 . *set trace on
-. log_closer test_log, raw_dir(raw)
+. log_closer test_log, raw_dir(raw) rw_line_user_post(rw_line_user)
       name:  test_log
        log:  -PWD-/log/test.log
   log type:  text
  closed on:  -normalized-
---------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------------------------

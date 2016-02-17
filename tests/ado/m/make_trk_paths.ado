@@ -1,5 +1,6 @@
 * Pass in -net ado- since -net query- doesn't return programmatically
 * Currently works with version 1.0.0 of trk file format (see line 2)
+* NB: No need to normalize the U counters (also first line), just sync everyone on change.
 program make_trk_paths
 	syntax anything(name=new_type), net_ado(string)
 	

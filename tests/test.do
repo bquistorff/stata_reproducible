@@ -98,8 +98,8 @@ tempfile tfile
 save `tfile'
 
 *set trace on
-log_closer test_log, raw_dir(raw)
-log_closer test_smcl, raw_dir(raw)
+log_closer test_log, raw_dir(raw) rw_line_user_post(rw_line_user)
+log_closer test_smcl, raw_dir(raw) rw_line_user_post(rw_line_user)
 local main_version = substr("`c(stata_version)'",1,2)
 copy log/test.log test-v`main_version'.log, replace
 copy log/test.smcl test-v`main_version'.smcl, replace

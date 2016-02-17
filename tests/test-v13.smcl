@@ -40,7 +40,7 @@ type -{cmd:update}- to check for updates to official Stata)
 {txt}Checking status of installed packages...
 
 {p 4 8 2}
-{txt}[1] {res:stata_reproducible} at C:\Users\Brian\Documents\GitHub\stata_reproducible:{break}
+{txt}[1] {res:stata_reproducible} at -PROJ_BASE-:{break}
 installed package is up to date
 {p_end}
 
@@ -158,6 +158,9 @@ S_FN:-normalized-
 T_gm_fix_span:{space 2}{res}{res}0
 {p_end}
 {txt}{p 0 16}
+PROJ_ROOT:{space 6}{res}{res}-PROJ_BASE-/
+{p_end}
+{txt}{p 0 16}
 S_ADO:-normalized-
 {p_end}
 {txt}{p 0 16}
@@ -177,6 +180,9 @@ S_OS:-normalized-
 {txt}{p 0 16}
 S_MACH:-normalized-
 {p_end}
+{txt}{p 0 16}
+_pwd:{space 11}{res}{res}-PWD-
+{p_end}
 {txt}
 {com}. tempfile tfile
 {txt}
@@ -185,7 +191,7 @@ S_MACH:-normalized-
 
 {com}. 
 . *set trace on
-. log_closer test_log, raw_dir(raw)
+. log_closer test_log, raw_dir(raw) rw_line_user_post(rw_line_user)
       {txt}name:  {res}test_log
        {txt}log:  {res}-PWD-/log/test.log
   {txt}log type:  {res}text
@@ -193,7 +199,7 @@ S_MACH:-normalized-
 {txt}{.-}
 (note: file raw/test.log not found)
 {res}{txt}
-{com}. log_closer test_smcl, raw_dir(raw)
+{com}. log_closer test_smcl, raw_dir(raw) rw_line_user_post(rw_line_user)
       {txt}name:  {res}test_smcl
        {txt}log:  {res}-PWD-/log/test.smcl
   {txt}log type:  {res}smcl

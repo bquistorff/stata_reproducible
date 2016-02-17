@@ -1,5 +1,6 @@
 program log_closer
-	syntax anything(name=name) [, delete_line_user(string) rw_line_user(string) raw_dir(string)]
+	syntax anything(name=name) [, delete_line_user(string) ///
+		rw_line_user_pre(string) rw_line_user_post(string) raw_dir(string)]
 	
 	qui log query `name'
 	local filename "`r(filename)'"
@@ -7,7 +8,8 @@ program log_closer
 	
 	log close `name'
 	
-	strip_nondeterminism_log `filename', type(`type') combine delete_line_user(`delete_line_user') rw_line_user(`rw_line_user') raw_dir(`raw_dir')
+	strip_nondeterminism_log `filename', type(`type') combine delete_line_user(`delete_line_user') ///
+		rw_line_user_pre(`rw_line_user_pre') rw_line_user_post(`rw_line_user_post') raw_dir(`raw_dir')
 end
 
 mata:
@@ -109,7 +111,8 @@ end
 * so use mata string functions
 * Also piece together broken lines so that search & replace works
 program strip_nondeterminism_log
-	syntax anything(name=filename), type(string) [combine delete_line_user(string)  rw_line_user(string) raw_dir(string)]
+	syntax anything(name=filename), type(string) [combine delete_line_user(string) ///
+		rw_line_user_pre(string) rw_line_user_post(string) raw_dir(string)]
 
 	if "`raw_dir'"!=""{
 		_getfilename "`filename'"
@@ -142,7 +145,7 @@ program strip_nondeterminism_log
 				mata: st_local("whole_line", st_local("whole_line")+substr(st_local("line"), 3, .))
 			}
 			else{
-				* Long macros that are split in the middle of the word, use the following continuations
+				* Long macros that are split in the middle of the word (from -mac dir-), use the following continuations
 				* Don't think this is needed
 				/*mata: st_local("line_cont", strofreal(strpos(st_local("line"), "                > ")==1))
 				if `line_cont'{
@@ -170,8 +173,9 @@ program strip_nondeterminism_log
 		
 		*Should I make substitutions
 		local new_line : copy local whole_line
-		if "`rw_line_user'"!="" mata: st_local("new_line", `rw_line_user'("new_line", "`type'"))
+		if "`rw_line_user_pre'"!="" mata: st_local("new_line", `rw_line_user_pre'("new_line", "`type'"))
 		mata: st_local("new_line", rw_line_system("new_line", "`type'"))
+		if "`rw_line_user_post'"!="" mata: st_local("new_line", `rw_line_user_post'("new_line", "`type'"))
 
 		mata: fput(st_numscalar("`out'"), st_local("new_line"))
 	}
