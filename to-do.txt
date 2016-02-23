@@ -1,5 +1,4 @@
 -write help
--Include user log normalizations from ado to testing
 -read full lines for deleteing in log re-write
 -Should slow sections (maybe of big dtas with strFs) be re-written in mata.
 

@@ -6,7 +6,8 @@
  {txt}opened on:  {res}-normalized-
 {txt}
 {com}. 
-. ******** Test the stata.trk normalizer *******
+. ******** Update package and test the stata.trk normalizer *******
+. *This is really only useful if you are installing an package from within the same project
 . cap make_trk_paths
 {txt}
 {com}. if `=_rc'==199 {c -(} //doesn't exist
@@ -31,13 +32,13 @@
 .         *   Then install as above
 .         * Solution 2: Temporarily convert stata.trk to using absolute paths
 .         make_trk_paths absolute, net_ado(ado/)
-.         adoupdate, update
+.         adoupdate stata_reproducible, update
 {res}{txt}{p 0 7 2}
 (note: {cmd:adoupdate} updates user-written files;
 type -{cmd:update}- to check for updates to official Stata)
 {p_end}
 
-{txt}Checking status of installed packages...
+{txt}Checking status of specified packages...
 
 {p 4 8 2}
 {txt}[1] {res:stata_reproducible} at -PROJ_BASE-:{break}
@@ -52,6 +53,66 @@ installed package is up to date
 . {c )-}
 {txt}
 {com}. 
+. 
+. ******** Tests adostorer **************
+. *This will change the trk file, so preserve and restore for version control 
+. * (these are not normal daily operations)
+. if 1 {c -(} //turn if don't want to test (e.g. no network connection)
+.         tempfile trk_backup
+.         copy "ado/stata.trk" `trk_backup'
+.         adostorer remove synth, adofolder(ado)
+{res}
+{s6hlp}
+package ^synth^ from http://fmwww.bc.edu/repec/bocode/s
+      ^'SYNTH': module to implement Synthetic Control Methods for Comparative Case Studies^
+{smcl}
+{res}
+(package uninstalled)
+{com}.         adostorer install synth, adofolder(ado) all
+{txt}checking {hilite:synth} consistency and verifying not already installed...
+installing into ado\...
+installation complete.
+{res}{com}.         sysuse smoking
+{txt}(Tobacco Sales in 39 US States)
+{com}.         xtset state year
+{res}{txt}{col 8}panel variable:  {res}state (strongly balanced)
+{txt}{col 9}time variable:  {res}{col 25}year, 1970 to 2000
+{txt}{col 17}delta:  {res}1 unit
+{com}.         qui synth cigsale beer(1984(1)1988) cigsale(1988), trunit(3) trperiod(1989)
+.         program drop _all //so that we don't hold onto the ado/<plat>/synthopt.plugin
+.         change_line using ado/stata.trk, ln(53) replace("d Distribution-Date: 20140127") //one day before currnt dist-date. This will trigger an update
+{txt}(note: file -TMPDIR-/-tempfile- not found)
+{com}.         adostorer update, adofolder(ado)
+{res}{txt}{p 0 7 2}
+(note: {cmd:adoupdate} updates user-written files;
+type -{cmd:update}- to check for updates to official Stata)
+{p_end}
+
+{txt}Checking status of specified packages...
+
+{p 4 8 2}
+{txt}[2] {res:synth} at http://fmwww.bc.edu/repec/bocode/s:{break}
+{res:package has been updated on server}
+{p_end}
+
+{txt}Packages to be updated are...
+
+{p 4 24 2}
+[2] {res:synth}{bind:       } -- 'SYNTH': module to implement Synthetic Control Methods for Comparative Case Studies
+{p_end}
+
+{txt}Installing updates...
+
+{txt}    [2] {res:synth}
+
+{txt}Cleaning up...{txt} Done
+{res}{com}.         qui synth cigsale beer(1984(1)1988) cigsale(1988), trunit(3) trperiod(1989)
+.         program drop _all //so that we don't hold onto the ado/<plat>/synthopt.plugin
+.         copy `trk_backup' "ado/stata.trk", replace
+. {c )-}
+{txt}
+{com}. 
+. *Setup for other
 . sysuse auto, clear
 {txt}(1978 Automobile Data)
 
@@ -161,15 +222,15 @@ T_gm_fix_span:{space 2}{res}{res}0
 PROJ_ROOT:{space 6}{res}{res}-PROJ_BASE-/
 {p_end}
 {txt}{p 0 16}
-S_ADO:-normalized-
-{p_end}
-{txt}{p 0 16}
 GPH_DEFAULT_VERSION:{break}
 {res}13
 {p_end}
 {txt}{p 0 16}
 DTA_DEFAULT_VERSION:{break}
 {res}13
+{p_end}
+{txt}{p 0 16}
+S_ADO:-normalized-
 {p_end}
 {txt}{p 0 16}
 S_FLAVOR:-normalized-
@@ -179,6 +240,9 @@ S_OS:-normalized-
 {p_end}
 {txt}{p 0 16}
 S_MACH:-normalized-
+{p_end}
+{txt}{p 0 16}
+_trk_backup:{space 4}{res}{res}-TMPDIR-/-tempfile-
 {p_end}
 {txt}{p 0 16}
 _pwd:{space 11}{res}{res}-PWD-

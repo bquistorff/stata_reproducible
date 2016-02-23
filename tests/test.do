@@ -1,18 +1,18 @@
-set tracedepth 3
+set tracedepth 1
 set trace off
 clear all
 scalar drop _all
 mac drop _all
 program drop _all
 qui include preferences.do
-*adopath ++ "../src"
 *closeallmatafiles
 
 log close _all //remove after testing
 log using log/test.log, replace name(test_log)
 log using log/test.smcl, replace name(test_smcl)
 
-******** Test the stata.trk normalizer *******
+******** Update package and test the stata.trk normalizer *******
+*This is really only useful if you are installing an package from within the same project
 cap make_trk_paths
 if `=_rc'==199 { //doesn't exist
 	* net {describe|from|get|install} don't accept relative paths, so use absolute
@@ -35,13 +35,34 @@ else { //100 "syntax error" -> Exists
 	*   Then install as above
 	* Solution 2: Temporarily convert stata.trk to using absolute paths
 	make_trk_paths absolute, net_ado(ado/)
-	adoupdate, update
+	adoupdate stata_reproducible, update
 	* Or -net install <pkg>, from(<abs_path>) replace 
 	*   <abs_path> must be normalized to remove any "<dir>/../" like we use above 
 	*   (FWIW: -get_absolute_path_from_relative- returns this)
 	make_trk_paths relative, net_ado(ado/)
 }
 
+
+******** Tests adostorer **************
+*This will change the trk file, so preserve and restore for version control 
+* (these are not normal daily operations)
+if 1 { //turn if don't want to test (e.g. no network connection)
+	tempfile trk_backup
+	copy "ado/stata.trk" `trk_backup'
+	adostorer remove synth, adofolder(ado)
+	adostorer install synth, adofolder(ado) all
+	sysuse smoking
+	xtset state year
+	qui synth cigsale beer(1984(1)1988) cigsale(1988), trunit(3) trperiod(1989)
+	program drop _all //so that we don't hold onto the ado/<plat>/synthopt.plugin
+	change_line using ado/stata.trk, ln(53) replace("d Distribution-Date: 20140127") //one day before currnt dist-date. This will trigger an update
+	adostorer update, adofolder(ado)
+	qui synth cigsale beer(1984(1)1988) cigsale(1988), trunit(3) trperiod(1989)
+	program drop _all //so that we don't hold onto the ado/<plat>/synthopt.plugin
+	copy `trk_backup' "ado/stata.trk", replace
+}
+
+*Setup for other
 sysuse auto, clear
 compress
 

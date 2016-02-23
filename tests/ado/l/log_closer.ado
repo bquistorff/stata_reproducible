@@ -35,21 +35,6 @@ real scalar delete_line_system(string scalar lcl_name, string scalar type){
 	return(0)
 }
 
-/*
-
-#### Module -parallel- ####
-# FS macros
-s/^((Stata dir|PLL_DIR): *).+/\1-normalized-/g
-# these change (via user) with num CPUs
-s/^((Clusters *:|PLL_CLUSTERS:|numclusters:|. global numclusters|LAST_PLL_N:|N Clusters:) *).+/\1-normalized-/g
-# the # of these changes with # CPUs (and appear in random order)
-# Random components
-s/^((pll_id|ID|pid|LAST_PLL_ID) *: +).+/\1-normalized-/g
-
-#print dots
-s/^After .+/-normalized-/g
-s/^(\.[^0-9]*)[0-9]+(s elapsed\.)/\1-normalized-\2/g
-*/
 
 string scalar rw_line_system(string scalar lcl_name, string scalar type){
 	l = st_local(lcl_name)
@@ -65,10 +50,10 @@ string scalar rw_line_system(string scalar lcl_name, string scalar type){
 	tmpdir = c("tmpdir")
 	if (substr(tmpdir,strlen(tmpdir),1)=="/") /* Windows adds this where linux doesn't */
 		tmpdir = substr(tmpdir,1,strlen(tmpdir)-1)
-	l = subinstr(l, tmpdir+"\"   , "-TMPDIR-/")
-	l = subinstr(l, tmpdir       , "-TMPDIR-")
-	l = subinstr(l, c("pwd")+"\" , "-PWD-/")
-	l = subinstr(l, c("pwd")     , "-PWD-")
+	l = subinstr(l, tmpdir+"\"  , "-TMPDIR-/")
+	l = subinstr(l, tmpdir      , "-TMPDIR-")
+	l = subinstr(l, c("pwd")+"\", "-PWD-/")
+	l = subinstr(l, c("pwd")    , "-PWD-")
 	l = regexr(l,"St[0-9][0-9][0-9][0-9][0-9]\.[0-9][0-9][0-9][0-9][0-9][0-9]","-tempfile-")
 	l = regexr(l,"ST_[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9].tmp", "-tempfile-")
 
