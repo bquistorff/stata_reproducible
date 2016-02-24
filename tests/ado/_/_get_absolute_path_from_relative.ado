@@ -1,4 +1,4 @@
-program get_absolute_path_from_relative
+program _get_absolute_path_from_relative
 	syntax anything(name=relative), local(string)
 	local relative `relative' //remove possible surrounding quotes
 	local orig_pwd "`c(pwd)'"

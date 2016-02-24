@@ -27,3 +27,4 @@ For Stata version <13, download as zip, unzip, and then replace the above -net i
   - v13-win uses JagPDF 1.4.0 (http://jagpdf.org) making PDF 1.5 docs
   - v14-win & v14-unix uses Haru Free PDF Library 2.4.0dev. On Unix makes PDF-1.3 and on Windows PDF-1.6.
 - The fixed date is 2013-07-10 14:23:00 (random date found from another file), if you want to change that you can search for 2013 as well as datasignature_dt in -saver-.
+- Results from numerical calculations may differ depending on Stata version, Stata flavor, OS, or architecture (e.g. x86_64). This is especially true if you use platform-specific plugins (that use compiled code). You may be able to accomodate these differences by rounding results or only outputting summaries.

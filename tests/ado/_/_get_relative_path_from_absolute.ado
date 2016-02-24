@@ -1,6 +1,6 @@
 *Performs case-sensitive match (so if on Windows or MacOS the strings should be pre-made lower case).
 *Won't work with folder names that contain "`'
-program get_relative_path_from_absolute
+program _get_relative_path_from_absolute
 	syntax anything(name=absolute), local(string)
 	local absolute `absolute' //remove possible surrounding quotes
 	

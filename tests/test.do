@@ -44,7 +44,7 @@ else { //100 "syntax error" -> Exists
 
 
 ******** Tests adostorer **************
-*This will change the trk file, so preserve and restore for version control 
+*This will change the trk file (inconsequentially), so preserve and restore for version control 
 * (these are not normal daily operations)
 if 1 { //turn if don't want to test (e.g. no network connection)
 	tempfile trk_backup

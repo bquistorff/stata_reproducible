@@ -43,10 +43,18 @@
 
 Checking status of specified packages...
 
-    [1] stata_reproducible at -PROJ_BASE-:
-        installed package is up to date
+    [2] stata_reproducible at -PROJ_BASE-:
+        package has been updated on server
 
-(no packages require updating)
+Packages to be updated are...
+
+    [2] stata_reproducible -- 'stata_reproducible': module
+
+Installing updates...
+
+    [2] stata_reproducible
+
+Cleaning up... Done
 .         * Or -net install <pkg>, from(<abs_path>) replace 
 .         *   <abs_path> must be normalized to remove any "<dir>/../" like we use above 
 .         *   (FWIW: -get_absolute_path_from_relative- returns this)
@@ -56,7 +64,7 @@ Checking status of specified packages...
 . 
 . 
 . ******** Tests adostorer **************
-. *This will change the trk file, so preserve and restore for version control 
+. *This will change the trk file (inconsequentially), so preserve and restore for version control 
 . * (these are not normal daily operations)
 . if 1 { //turn if don't want to test (e.g. no network connection)
 .         tempfile trk_backup
@@ -69,7 +77,7 @@ package synth from http://fmwww.bc.edu/repec/bocode/s
 (package uninstalled)
 .         adostorer install synth, adofolder(ado) all
 checking synth consistency and verifying not already installed...
-installing into ado/...
+installing into ado\...
 installation complete.
 .         sysuse smoking
 (Tobacco Sales in 39 US States)

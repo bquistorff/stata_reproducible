@@ -41,11 +41,21 @@ type -{cmd:update}- to check for updates to official Stata)
 {txt}Checking status of specified packages...
 
 {p 4 8 2}
-{txt}[1] {res:stata_reproducible} at -PROJ_BASE-:{break}
-installed package is up to date
+{txt}[2] {res:stata_reproducible} at -PROJ_BASE-:{break}
+{res:package has been updated on server}
 {p_end}
 
-{txt}(no packages require updating)
+{txt}Packages to be updated are...
+
+{p 4 24 2}
+[2] {res:stata_reproducible} -- 'stata_reproducible': module
+{p_end}
+
+{txt}Installing updates...
+
+{txt}    [2] {res:stata_reproducible}
+
+{txt}Cleaning up...{txt} Done
 {com}.         * Or -net install <pkg>, from(<abs_path>) replace 
 .         *   <abs_path> must be normalized to remove any "<dir>/../" like we use above 
 .         *   (FWIW: -get_absolute_path_from_relative- returns this)
@@ -55,7 +65,7 @@ installed package is up to date
 {com}. 
 . 
 . ******** Tests adostorer **************
-. *This will change the trk file, so preserve and restore for version control 
+. *This will change the trk file (inconsequentially), so preserve and restore for version control 
 . * (these are not normal daily operations)
 . if 1 {c -(} //turn if don't want to test (e.g. no network connection)
 .         tempfile trk_backup
@@ -70,7 +80,7 @@ package ^synth^ from http://fmwww.bc.edu/repec/bocode/s
 (package uninstalled)
 {com}.         adostorer install synth, adofolder(ado) all
 {txt}checking {hilite:synth} consistency and verifying not already installed...
-installing into ado/...
+installing into ado\...
 installation complete.
 {res}{com}.         sysuse smoking
 {txt}(Tobacco Sales in 39 US States)

@@ -1,36 +1,9 @@
-* 00000044
+* 00000046
 *! version 1.0.0
 * Do not erase or edit this file
 * It is used by Stata to track the ado and help
 * files you have installed.
 
-S ..
-N stata_reproducible.pkg
-D 22 Feb 2016
-U 42
-d 'stata_reproducible': module
-d 
-d   Tools to make output from Stata reproducible (byte-identical).
-d This helps with committing generated (intermediate or final) files under version control.
-d 
-d Version 0.1
-d 
-d Distribution-Date: 04feb2016
-d 
-d Author: Brian Quistorff
-d Support: email bquistorff@gmail.com
-d 
-f _\_zero_padding.ado
-f a\adostorer.ado
-f g\get_absolute_path_from_relative.ado
-f g\get_relative_path_from_absolute.ado
-f g\graph_exportr.ado
-f g\graph_saver.ado
-f m\make_trk_paths.ado
-f p\platformname.ado
-f s\saver.ado
-f l\log_closer.ado
-e
 S http://fmwww.bc.edu/repec/bocode/s
 N synth.pkg
 D 22 Feb 2016
@@ -66,4 +39,31 @@ f s\synth_ll.ado
 f s\synth.sthlp
 f l\lsynth_mata_subr.mlib
 f s\synthopt.plugin
+e
+S ..
+N stata_reproducible.pkg
+D 23 Feb 2016
+U 46
+d 'stata_reproducible': module
+d 
+d   Tools to make output from Stata reproducible (byte-identical).
+d This helps with committing generated (intermediate or final) files under version control.
+d 
+d Version 0.1
+d 
+d Distribution-Date: 06feb2016
+d 
+d Author: Brian Quistorff
+d Support: email bquistorff@gmail.com
+d 
+f _\_get_absolute_path_from_relative.ado
+f _\_get_relative_path_from_absolute.ado
+f _\_zero_padding.ado
+f a\adostorer.ado
+f g\graph_exportr.ado
+f g\graph_saver.ado
+f m\make_trk_paths.ado
+f p\platformname.ado
+f s\saver.ado
+f l\log_closer.ado
 e

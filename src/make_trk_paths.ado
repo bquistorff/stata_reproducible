@@ -28,8 +28,8 @@ program make_trk_paths
 														("`new_type'"=="absolute" & `loc_rel'))
 								
 				if `to_convert'{
-					if "`new_type'"=="relative" get_relative_path_from_absolute "`path'", local(new_path)
-					else                        get_absolute_path_from_relative "`path'", local(new_path)
+					if "`new_type'"=="relative" _get_relative_path_from_absolute "`path'", local(new_path)
+					else                        _get_absolute_path_from_relative "`path'", local(new_path)
 				
 					file write `out' "S `new_path'" _n
 					continue
