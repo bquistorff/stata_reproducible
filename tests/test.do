@@ -50,13 +50,16 @@ if 1 { //turn if don't want to test (e.g. no network connection)
 	tempfile trk_backup
 	copy "ado/stata.trk" `trk_backup'
 	adostorer remove synth, adofolder(ado)
-	adostorer install synth, adofolder(ado) all
+	adostorer install synth, adofolder(ado) all mkdirs
 	sysuse smoking
 	xtset state year
 	qui synth cigsale beer(1984(1)1988) cigsale(1988), trunit(3) trperiod(1989)
 	program drop _all //so that we don't hold onto the ado/<plat>/synthopt.plugin
 	change_line using ado/stata.trk, ln(53) replace("d Distribution-Date: 20140127") //one day before currnt dist-date. This will trigger an update
 	adostorer update, adofolder(ado)
+	*If you didn't create folders for platforms that the package has files for, you can make those folders and then:
+	* -download the files and place them appropriately
+	* -uninstall & install again the package with -adostorer-
 	qui synth cigsale beer(1984(1)1988) cigsale(1988), trunit(3) trperiod(1989)
 	program drop _all //so that we don't hold onto the ado/<plat>/synthopt.plugin
 	copy `trk_backup' "ado/stata.trk", replace
