@@ -1,7 +1,7 @@
 program save_all_figs
 	syntax anything(name=base_name) [, nogph]
 	
-	if "`gph'"!="nogph" graph_saver "fig/gph/`base_name'.gph", replace
+	if "`gph'"!="nogph" graph_saver "fig/gph/`base_name'.gph", replace version(13)
 	
 	if "${OMIT_FIG_EXPORT}"=="1" exit
 	
