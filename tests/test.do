@@ -75,7 +75,7 @@ if 1 { //graphs and exports
 	if `main_version'==14 qui graph_saver norm/scatter-v13-from-v14.gph, replace version(13)
 	qui graph_saver norm/scatter-v`main_version'.gph, replace version(`main_version')
 
-	foreach fmt in ps eps wmf emf pdf png tif {
+	foreach fmt in ps eps pdf png tif /*emf wmf*/ {
 		qui graph export raw/scatter-v`main_version'-`c(os)'-raw.`fmt', replace
 		cap /*noi*/ graph_exportr norm/scatter-v`main_version'-`c(os)'.`fmt', replace
 	}
