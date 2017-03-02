@@ -1,7 +1,7 @@
 # stata_reproducible
 The primary goal of this package is to make output from Stata reproducible (subsequent runs ca produce byte-identical files). This eases process of knowing if "content" changed meaningfully bewteen runs. Program driven work-flows (e.g. git) and manual checking of results are made much easier. Now output files can possibly be committed to managed by version control (helpful for storing results from long analyses).
 
-A secondary goal is to make outputs consistent across similar versions of Stata (e.g. v13 and v14) and across different platforms. This helps if computing resources are diverse and they contribute output files (the outputs can be versioned or be in a (distributed) build cache). This secondary goal is only perfectly achievable, but workable solutions now exist.
+A secondary goal is to make outputs consistent across similar versions of Stata (e.g. v13 and v14) and across different platforms. This helps if computing resources are diverse and they contribute output files (the outputs can be versioned or be in a (distributed) build cache). This secondary goal is not perfectly achievable, but workable solutions now exist.
 
 # Usage:
 If you are using Stata 13 or Stata 14 (and no others) use the same version of Stata you can:
