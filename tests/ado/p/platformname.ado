@@ -1,7 +1,5 @@
-/* not sure the values to check for these
-MAC (32-bit PowerPC)
-OSX.PPC (32-bit PowerPC)
-SOL64, and SOLX8664 (64-bit x86-64)*/
+*! version 0.1.0 Brian Quistorff <bquistorff@gmail.com>
+*! Returns the platform code of the current machine.
 program platformname, rclass
 	args local
 	* -help creturn- on Windows v14 says these are the only three options currently

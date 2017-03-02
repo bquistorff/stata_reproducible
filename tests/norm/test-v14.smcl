@@ -1,0 +1,195 @@
+{smcl}
+{com}{sf}{ul off}{txt}{.-}
+      name:  {res}test_smcl
+       {txt}log:  {res}-PWD-/log/test.smcl
+  {txt}log type:  {res}smcl
+ {txt}opened on:  {res}-normalized-
+{txt}
+{com}. 
+. ******** Update package and test the stata.trk normalizer *******
+. *This is really only useful if you are installing an package from within the same project
+. cap make_trk_paths
+{txt}
+{com}. if `=_rc'==199 {c -(} //command not found
+.         net install stata_reproducible, from(`c(pwd)'/../)
+. {c )-}
+{txt}
+{com}. else {c -(} //100 "syntax error" (didn't run with proper args) -> command found
+.         make_trk_paths absolute, adofolder(ado/)
+.         adoupdate stata_reproducible, update
+{res}{txt}{p 0 7 2}
+(note: {cmd:adoupdate} updates user-written files;
+type -{cmd:update}- to check for updates to official Stata)
+{p_end}
+{txt}(no packages match "stata_reproducible")
+{com}. {c )-}
+{txt}
+{com}. make_trk_paths relative, adofolder(ado/)
+{txt}
+{com}. 
+. 
+. ******** Tests adostorer **************
+. *This will change the trk file (inconsequentially), so preserve and restore for version control 
+. * (these are not normal daily operations)
+. if 0 {c -(} //turn if don't want to test (e.g. no network connection)
+.         tempfile trk_backup
+.         copy "ado/stata.trk" `trk_backup'
+.         adostorer remove synth, adofolder(ado)
+.         adostorer install synth, adofolder(ado) all mkdirs
+.         sysuse smoking
+.         xtset state year
+.         qui synth cigsale beer(1984(1)1988) cigsale(1988), trunit(3) trperiod(1989)
+.         program drop _all //so that we don't hold onto the ado/<plat>/synthopt.plugin
+.         change_line using ado/stata.trk, ln(53) replace("d Distribution-Date: 20140127") //one day before currnt dist-date. This will trigger an update
+.         adostorer update, adofolder(ado)
+.         qui synth cigsale beer(1984(1)1988) cigsale(1988), trunit(3) trperiod(1989)
+.         program drop _all //so that we don't hold onto the ado/<plat>/synthopt.plugin
+.         copy `trk_backup' "ado/stata.trk", replace
+. {c )-}
+{txt}
+{com}. 
+. *Setup for other
+. sysuse auto, clear
+{txt}(1978 Automobile Data)
+
+{com}. compress
+  mpg was int now byte
+  rep78 was int now byte
+  trunk was int now byte
+  turn was int now byte
+  make was str18 now str17
+{txt}  (370 bytes saved)
+
+{com}. datasig set, reset
+{res}  74:12(71728):2155345365:1865188037       {txt}(data signature set)
+
+{com}. 
+. *Use -quiet- before commands that display differently on different platforms 
+. * (e.g. use OMIT_FIG_EXP or use `main_version')
+. 
+. ******** Export platform-version specific versions ********
+. * This is to see all the differences. Be specific about versions
+. local main_version = substr("`c(stata_version)'",1,2)
+{txt}
+{com}. 
+. if 1{c -(} //datasets
+.         qui save raw/auto-v`main_version'-raw.dta, replace
+.         if `main_version'==14 qui saver norm/auto-v13-from-v14.dta, replace version(13)
+.         qui saver norm/auto-v`main_version'.dta, replace version(`main_version')
+. 
+.         ******** Check that everything wrote fine ********
+.         foreach dta in auto-v`main_version'.dta `=cond(`main_version'==14,"auto-v13-from-v14.dta","")' {c -(}
+{txt}  2{com}.                 qui use norm/`dta', clear
+{txt}  3{com}.                 qui datasignature confirm
+{txt}  4{com}.         {c )-}  
+. {c )-}
+{txt}
+{com}. 
+. if 1 {c -(} //graphs and exports
+.         save auto.dta //so graphs have same embeded dataset location.
+{txt}file auto.dta saved
+{com}.         twoway (scatter mpg price), title("Title") note("Notes") //has to go after save as data path written
+{res}{com}.         
+.         qui graph save raw/scatter-v`main_version'-`c(os)'-raw.gph, replace
+.         if `main_version'==14 qui graph_saver norm/scatter-v13-from-v14.gph, replace version(13)
+.         qui graph_saver norm/scatter-v`main_version'.gph, replace version(`main_version')
+. 
+.         foreach fmt in ps eps wmf emf pdf png tif {c -(}
+{txt}  2{com}.                 qui graph export raw/scatter-v`main_version'-`c(os)'-raw.`fmt', replace
+{txt}  3{com}.                 cap /*noi*/ graph_exportr norm/scatter-v`main_version'-`c(os)'.`fmt', replace
+{txt}  4{com}.         {c )-}
+.         erase auto.dta
+.         
+.         ******** Check that everything wrote fine ********
+.         graph use norm/scatter-v13.gph, nodraw
+{res}{com}.         graph use norm/scatter-v13-from-v14.gph, nodraw
+{res}{com}.         if `main_version'==14 qui graph use norm/scatter-v14.gph, nodraw
+. {c )-}
+{txt}
+{com}. 
+. ******** Simulate a workflow to get canonical versions **********
+. saver data/auto.dta, replace
+{txt}file data/auto.dta saved
+
+{com}. qui save_all_figs scatter
+{txt}
+{com}. 
+. *If another platform updates gphs,then run this
+. if "$OMIT_FIG_EXPORT"=="0"{c -(}
+.         qui do gen_ext_from_gph.do
+. {c )-}
+{txt}
+{com}. 
+. 
+. ******* Check the log normalization **************
+. local main_version ""
+{txt}
+{com}. global OMIT_FIG_EXPORT ""
+{txt}
+{com}. display_run_specs /*creturn list has too many things to null out*/
+Flavor = -normalized-
+               {txt}Revision = {res}-normalized-
+c(os) = -normalized-
+c(osdtl) = -normalized-
+c(machine_type) = -normalized-
+c(byteorder) = -normalized-
+            {txt}c(hostname) = -normalized-
+                 {txt}c(pwd) = {res}"-PWD-"
+c(stata_version) = -normalized-
+c(processors) = -normalized-
+{txt}
+{com}. mac dir
+{txt}{p 0 16}
+S_FNDATE:{space 7}{res}{res}-normalized-
+{p_end}
+{txt}{p 0 16}
+S_FN:-normalized-
+{p_end}
+{txt}{p 0 16}
+T_gm_fix_span:{space 2}{res}{res}0
+{p_end}
+{txt}{p 0 16}
+PROJ_ROOT:{space 6}{res}{res}-PROJ_BASE-/
+{p_end}
+{txt}{p 0 16}
+DEFAULT_OUTPUT_VERSION:{break}
+{res}13
+{p_end}
+{txt}{p 0 16}
+S_ADO:-normalized-
+{p_end}
+{txt}{p 0 16}
+S_FLAVOR:-normalized-
+{p_end}
+{txt}{p 0 16}
+S_OS:-normalized-
+{p_end}
+{txt}{p 0 16}
+S_MACH:-normalized-
+{p_end}
+{txt}{p 0 16}
+_pwd:{space 11}{res}{res}-PWD-
+{p_end}
+{txt}
+{com}. tempfile tfile
+{txt}
+{com}. save `tfile'
+{txt}file -TMPDIR-/ST_0u000001.tmp saved
+
+{com}. 
+. log_closer test_log, raw_dir(raw) rw_line_user_post(rw_line_user)
+      {txt}name:  {res}test_log
+       {txt}log:  {res}-PWD-/log/test.log
+  {txt}log type:  {res}text
+ {txt}closed on:  {res}-normalized-
+{txt}{.-}
+(note: file raw/test.log not found)
+{res}{txt}
+{com}. log_closer test_smcl, raw_dir(raw) rw_line_user_post(rw_line_user)
+      {txt}name:  {res}test_smcl
+       {txt}log:  {res}-PWD-/log/test.smcl
+  {txt}log type:  {res}smcl
+ {txt}closed on:  {res}-normalized-
+{txt}{.-}
+{smcl}
+{txt}{sf}{ul off}

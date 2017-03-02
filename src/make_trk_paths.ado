@@ -1,15 +1,25 @@
-* Pass in -net ado- since -net query- doesn't return programmatically
-* Currently works with version 1.0.0 of trk file format (see line 2)
-* NB: No need to normalize the U counters (also first line), just sync everyone on change.
+*! version 0.1.0 Brian Quistorff <bquistorff@gmail.com>
+*! Converts local paths in a trk file of an ado root between absolute and relative forms.
+* Can't automatically determine -net ado- since -net query- doesn't return programmatically
 program make_trk_paths
-	syntax anything(name=new_type), net_ado(string)
+	syntax anything(name=new_type), adofolder(string)
 	
 	_assert inlist("`new_type'","relative","absolute"), msg("Need to specify relative or absolute")
-	local net_ado `net_ado' //remove surrounding quotes
+	local adofolder `adofolder' //remove surrounding quotes
 	
 	tempname in out
-	file open `in' using "`net_ado'/stata.trk", read text
-	qui file open `out' using "`net_ado'/stata.trk.new", write text replace
+	file open `in' using "`adofolder'/stata.trk", read text
+  tempfile stata_trk_new
+  //local stata_trk_new "`adofolder'/stata.trk.new" //if using, remember to erase below
+	qui file open `out' using "`stata_trk_new'", write text replace
+  
+  file read `in' next_u_id_line
+	file write `out' `"`macval(next_u_id_line)'"' _n
+  
+  file read `in' trk_version_line
+  if "`trk_version_line'"!="*! version 1.0.0" di as err "make_trk_paths not test of trk files not version 1.0.0"
+	file write `out' `"`macval(trk_version_line)'"' _n
+  
 	while 1 {
 		file read `in' line
 		local status "`r(status)'"
@@ -42,6 +52,6 @@ program make_trk_paths
 	file close `in'
 	file close `out'
 	
-	copy "`net_ado'/stata.trk.new" "`net_ado'/stata.trk", replace
-	erase "`net_ado'/stata.trk.new"
+	copy "`stata_trk_new'" "`adofolder'/stata.trk", replace
+	//erase "`stata_trk_new'" //not needed if using tempfile
 end

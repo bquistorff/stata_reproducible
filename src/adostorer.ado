@@ -1,12 +1,11 @@
-* -pkg_full_download synth, adofolder(ado-store) ado(ado)
-* Do a dummy install so that the stata.trk file keeps track of the remote location
-*Next extract a new pkg file from trk file. then update it with the new downlaods
+*! version 0.1.0 Brian Quistorff <bquistorff@gmail.com>
+*! installs packages to a directory in a way that all platforms can use the same shared directory.
 program adostorer
 	syntax anything, adofolder(string) [all mkdirs replace from(string)]
 	gettoken cmd pkglist : anything
 	
 	if "`cmd'"=="remove" local cmd "uninstall"
-	_assert inlist("`cmd'","install","update","uninstall"), msg("Only install, update, uninstall)
+	_assert inlist("`cmd'","install","update","uninstall"), msg("Only install, update, uninstall")
 	
 	_assert (`: list sizeof pkglist'==1 | "`cmd'"=="update"), msg("Only one package per time for install/uninstall") 
 	
@@ -72,7 +71,7 @@ program adostorer
 			else net install `pkglist', from(`from') `all' `replace'
 		}
 		if "`cmd'"=="update" {
-			adoupdate `pkglist', update
+			adoupdate `pkglist', update dir(`adofolder')
 		}
 		
 		*Now download the "g/G" files

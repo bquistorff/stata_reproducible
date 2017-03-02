@@ -1,4 +1,4 @@
-* 00000046
+* 00000052
 *! version 1.0.0
 * Do not erase or edit this file
 * It is used by Stata to track the ado and help
@@ -40,30 +40,44 @@ f s\synth.sthlp
 f l\lsynth_mata_subr.mlib
 f s\synthopt.plugin
 e
-S ..
+S C:\Users\bquist\Documents\GitHub\stata_reproducible
 N stata_reproducible.pkg
-D 23 Feb 2016
-U 46
+D  2 Mar 2017
+U 52
 d 'stata_reproducible': module
 d 
 d   Tools to make output from Stata reproducible (byte-identical).
 d This helps with committing generated (intermediate or final) files under version control.
 d 
-d Version 0.1
+d Version 0.2
 d 
-d Distribution-Date: 06feb2016
+d Distribution-Date: 11feb2017
 d 
 d Author: Brian Quistorff
 d Support: email bquistorff@gmail.com
 d 
+f _\_copy_serset.ado
 f _\_get_absolute_path_from_relative.ado
 f _\_get_relative_path_from_absolute.ado
+f _\_strip_nodeterminism_serset.ado
+f _\_strip_nonreproducibility_dta.ado
+f _\_strip_nonreproducibility_gph.ado
+f _\_strip_nonreproducibility_log.ado
+f _\_strip_nonreproducibility_pdf.ado
 f _\_zero_padding.ado
 f a\adostorer.ado
+f a\adostorer.sthlp
 f g\graph_exportr.ado
+f g\graph_exportr.sthlp
 f g\graph_saver.ado
-f m\make_trk_paths.ado
-f p\platformname.ado
-f s\saver.ado
+f g\graph_saver.sthlp
 f l\log_closer.ado
+f l\log_closer.sthlp
+f m\make_trk_paths.ado
+f m\make_trk_paths.sthlp
+f p\platformname.ado
+f p\platformname.sthlp
+f s\saver.ado
+f s\saver.sthlp
+f s\stata_reproducible.sthlp
 e

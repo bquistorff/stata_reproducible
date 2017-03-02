@@ -1,7 +1,0 @@
--write help
--read full lines for deleteing in log re-write
--Should slow sections (maybe of big dtas with strFs) be re-written in mata.
-
--check if I really need to zero out gph serset parts (including string ends)? Can strLs be in sersets?
--Should I be able to handle 8byte integers (long long) in the v14 dta format.
--Allow hilo instead of just lohi byteorder

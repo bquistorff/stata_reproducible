@@ -1,14 +1,15 @@
-* -pkg_full_download synth, adofolder(ado-store) ado(ado)
-* Do a dummy install so that the stata.trk file keeps track of the remote location
-*Next extract a new pkg file from trk file. then update it with the new downlaods
+*! version 0.1.0 Brian Quistorff <bquistorff@gmail.com>
+*! installs packages to a directory in a way that all platforms can use the same shared directory.
 program adostorer
-	syntax anything, adofolder(string) [all replace from(string)]
+	syntax anything, adofolder(string) [all mkdirs replace from(string)]
 	gettoken cmd pkglist : anything
 	
 	if "`cmd'"=="remove" local cmd "uninstall"
-	_assert inlist("`cmd'","install","update","uninstall"), msg("Only install, update, or uninstall")
+	_assert inlist("`cmd'","install","update","uninstall"), msg("Only install, update, uninstall")
 	
 	_assert (`: list sizeof pkglist'==1 | "`cmd'"=="update"), msg("Only one package per time for install/uninstall") 
+	
+	local poss_plats "WIN64A WIN LINUX64 LINUX MAC OSX.PPC OSX.X86 MACINTEL OSX.X8664 MACINTEL64 SOL64 SOLX8664"
 	
 	*If doing an update, get only the packages that will change
 	if "`cmd'"=="update" {
@@ -20,7 +21,6 @@ program adostorer
 	tempname trk
 	
 	*Get available platform directories
-	local poss_plats "WIN64A WIN LINUX64 LINUX MAC OSX.PPC OSX.X86 MACINTEL OSX.X8664 MACINTEL64 SOL64 SOLX8664"
 	local pwd "`c(pwd)'"
 	foreach plat of local poss_plats{
 		cap cd "`adofolder'/`plat'"
@@ -71,7 +71,7 @@ program adostorer
 			else net install `pkglist', from(`from') `all' `replace'
 		}
 		if "`cmd'"=="update" {
-			adoupdate `pkglist', update
+			adoupdate `pkglist', update dir(`adofolder')
 		}
 		
 		*Now download the "g/G" files
@@ -101,16 +101,22 @@ program adostorer
 					if r(eof) continue, break
 					if "`first_let2'"=="g"{
 						local plat : word 2 of `line2'
-						if `: list posof "`plat'" in avail_plats'!=0{
-							local serverpath : word 3 of `line2'
-							local localname : word 4 of `line2'
-							
-							local localname_let = substr("`localname'",1,1)
-							cap erase "`adofolder'/`localname_let'/`localname'"
-							
-							*download to the right spot
-							qui copy "`rem_pkg_dir'/`serverpath'" "`adofolder'/`plat'/`localname'", replace
+						local localname : word 4 of `line2'
+						local pos_dir : list posof "`plat'" in avail_plats
+						if `pos_dir'==0 & "`mkdirs'"==""{
+							di "Did not install `localname' for `plat' platform (no existing directory)."
+							continue
 						}
+						if `pos_dir'==0 & "`mkdirs'"!=""{
+							mkdir "`adofolder'/`plat'"
+						}
+						local serverpath : word 3 of `line2'
+						
+						local localname_let = substr("`localname'",1,1)
+						cap erase "`adofolder'/`localname_let'/`localname'"
+						
+						*download to the right spot
+						qui copy "`rem_pkg_dir'/`serverpath'" "`adofolder'/`plat'/`localname'", replace
 					}
 				}
 				*file close `rem_pkg_copy_fhandle'

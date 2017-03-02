@@ -1,8 +1,9 @@
-sysdir set PLUS "ado/"
+//Can also force setting PLUS
+sysdir set PERSONAL "ado/"
+net set ado PERSONAL
+net set other PERSONAL
 platformname
-global S_ADO "PLUS;BASE;ado/`r(platformname)'"
-net set ado PLUS
-net set other PLUS
+global S_ADO "PLUS;BASE;PERSONAL;ado/`r(platformname)'"
 
 set scheme s2mono
 
@@ -10,8 +11,7 @@ set scheme s2mono
 * (e.g. adoupdate) do their own line-splitting. Therefore make splitting unlikely.
 set linesize 140
 
-global DTA_DEFAULT_VERSION 13
-global GPH_DEFAULT_VERSION 13
+global DEFAULT_OUTPUT_VERSION 13
 global OMIT_FIG_EXPORT = ("`c(os)'"!="Windows" | substr("`c(stata_version)'",1,2)!="13")
 
 *Grab the project root. Roots should have "/" at end so if blank, path becomes relative
