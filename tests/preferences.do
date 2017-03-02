@@ -11,7 +11,7 @@ set scheme s2mono
 * (e.g. adoupdate) do their own line-splitting. Therefore make splitting unlikely.
 set linesize 140
 
-global DEFAULT_OUTPUT_VERSION 13
+global DEFAULT_OUT_VERSION 13
 global OMIT_FIG_EXPORT = ("`c(os)'"!="Windows" | substr("`c(stata_version)'",1,2)!="13")
 
 *Grab the project root. Roots should have "/" at end so if blank, path becomes relative

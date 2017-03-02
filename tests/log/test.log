@@ -152,7 +152,7 @@ S_FNDATE:       -normalized-
 S_FN:           -normalized-
 T_gm_fix_span:  0
 PROJ_ROOT:      -PROJ_BASE-/
-DEFAULT_OUTPUT_VERSION:
+DEFAULT_OUT_VERSION:
                 13
 S_ADO:          -normalized-
 S_FLAVOR:       -normalized-

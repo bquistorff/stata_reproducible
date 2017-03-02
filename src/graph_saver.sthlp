@@ -59,7 +59,7 @@ Currently, only graph file formats made natively by Stata version 11-14 are supp
 {opt version} allows specifying the version to save as. 
 This can be helpful if you are using Stata v14 and would like to save the file in the format of Stata v13.
 This allows the use of both Stata v13 and v14 to be used and to create identical output files.
-A default can be provided by setting {it:$DEFAULT_OUTPUT_VERSION} to "13" or "14" which allows both versions to be used on the same code without unnecessary code clutter.
+A default can be provided by setting {it:$DEFAULT_OUT_VERSION} to "13" or "14" which allows both versions to be used on the same code without unnecessary code clutter.
 
 
 {marker reproducibility}{...}

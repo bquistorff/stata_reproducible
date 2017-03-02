@@ -117,7 +117,8 @@ installed package is up to date
 {com}. 
 . ******** Simulate a workflow to get canonical versions **********
 . saver data/auto.dta, replace
-{txt}file data/auto.dta saved
+{txt}(saving in Stata 13 format)
+file data/auto.dta saved
 
 {com}. qui save_all_figs scatter
 {txt}
@@ -160,7 +161,7 @@ T_gm_fix_span:{space 2}{res}{res}0
 PROJ_ROOT:{space 6}{res}{res}-PROJ_BASE-/
 {p_end}
 {txt}{p 0 16}
-DEFAULT_OUTPUT_VERSION:{break}
+DEFAULT_OUT_VERSION:{break}
 {res}13
 {p_end}
 {txt}{p 0 16}
