@@ -51,10 +51,10 @@ Currently, only graph file formats made natively by Stata version 13-14 are supp
 {title:Reproducibility}
 
 {pstd}
-Some formats can not yet be made reproducible: emf,
+Some formats can not yet be made reproducible: emf and wmf. The other formats are reproducible: eps, pdf, png, ps, tif.
 
 {pstd}
-The main sources of non-reproducibility in exported graph files are pdfs.
+The main sources of (fixable) non-reproducibility in exported graph files are pdfs.
 These sometimes (Windows on Stata v13) have timestamps and randomness.
 
 {marker remarks}{...}
