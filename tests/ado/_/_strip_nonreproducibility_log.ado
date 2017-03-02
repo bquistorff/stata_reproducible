@@ -11,7 +11,7 @@ real scalar delete_line_system(string scalar lcl_name, string scalar type){
 	if (strpos(line,"S_level:")==1) return(mac_num_del) /*Appears in different orders on different machines*/
 	/* Stata details */
 	if (regexm(line,"^S_(StataMP|StataSE|CONSOLE|MODE):")) return(mac_num_del) /*sometimes appear*/
-	if (regexm(line,"^.saving in Stata .. format.")) return(1) /*appears depending on version*/
+	if (regexm(line,"^.*saving in Stata .. format.")) return(1) /*appears depending on version (v13 saving in v13)*/
 	
 	return(0)
 }
@@ -61,6 +61,9 @@ string scalar rw_line_system(string scalar lcl_name, string scalar type){
 	/*smcl tags differ in v14 and v13 so strip*/
 	if (regexm(l, "  (.*variable)? *({[^}]+})*([^{]+)({[^}]+})* was ({[^}]+})*([^{]+)({[^}]+})* now ({[^}]+})*([^{]+){?[^}]*}?")){ /*-compress- message changed v13->v14*/
 		l="  "+regexs(3)+" was "+regexs(6)+" now "+regexs(9) 
+	}
+	if (regexm(l, ".+(file .+ saved)")){
+		l=regexs(1)
 	}
 		
 
