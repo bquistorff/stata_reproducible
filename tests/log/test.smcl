@@ -191,6 +191,7 @@ file -TMPDIR-/-tempfile- saved
   {txt}log type:  {res}text
  {txt}closed on:  {res}-normalized-
 {txt}{.-}
+(note: file raw/test.log not found)
 {res}{txt}
 {com}. log_closer test_smcl, raw_dir(raw) rw_line_user_post(rw_line_user)
       {txt}name:  {res}test_smcl
