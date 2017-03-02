@@ -34,8 +34,9 @@ string scalar rw_line_system(string scalar lcl_name, string scalar type){
 	l = subinstr(l, tmpdir      , "-TMPDIR-")
 	l = subinstr(l, c("pwd")+"\", "-PWD-/")
 	l = subinstr(l, c("pwd")    , "-PWD-")
-	l = regexr(l,"St[0-9][0-9][0-9][0-9][0-9]\.[0-9][0-9][0-9][0-9][0-9][0-9]","-tempfile-")
-	l = regexr(l,"ST_[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9].tmp", "-tempfile-")
+  /*first is Unix tempfile and second is windows*/
+	l = regexr(l,"St[0-9a-x][0-9a-x][0-9a-x][0-9a-x][0-9a-x]\.[0-9a-x][0-9a-x][0-9a-x][0-9a-x][0-9a-x][0-9a-x]","-tempfile-")
+	l = regexr(l,"ST_[0-9a-x][0-9a-x][0-9a-x][0-9a-x][0-9a-x][0-9a-x][0-9a-x][0-9a-x].tmp", "-tempfile-")
 
 	l = regexr(l,"c\(hostname\) = .+","c(hostname) = -normalized-")
 
