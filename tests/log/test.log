@@ -104,7 +104,7 @@ file auto.dta saved
 .         qui graph_saver norm/scatter-v`main_version'.gph, replace version(`main_version')
 . 
 .         foreach fmt in ps eps pdf png tif /*emf wmf*/ {
-  2.                 qui graph export raw/scatter-v`main_version'-`c(os)'-raw.`fmt', replace
+  2.                 cap /*noi*/ graph export raw/scatter-v`main_version'-`c(os)'-raw.`fmt', replace
   3.                 cap /*noi*/ graph_exportr norm/scatter-v`main_version'-`c(os)'.`fmt', replace
   4.         }
 .         erase auto.dta
@@ -163,7 +163,7 @@ _pwd:           -PWD-
 . tempfile tfile
 
 . save `tfile'
-file -TMPDIR-/ST_0u000001.tmp saved
+file -TMPDIR-/-tempfile- saved
 
 . 
 . log_closer test_log, raw_dir(raw) rw_line_user_post(rw_line_user)

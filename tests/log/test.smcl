@@ -103,7 +103,7 @@ installed package is up to date
 .         qui graph_saver norm/scatter-v`main_version'.gph, replace version(`main_version')
 . 
 .         foreach fmt in ps eps pdf png tif /*emf wmf*/ {c -(}
-{txt}  2{com}.                 qui graph export raw/scatter-v`main_version'-`c(os)'-raw.`fmt', replace
+{txt}  2{com}.                 cap /*noi*/ graph export raw/scatter-v`main_version'-`c(os)'-raw.`fmt', replace
 {txt}  3{com}.                 cap /*noi*/ graph_exportr norm/scatter-v`main_version'-`c(os)'.`fmt', replace
 {txt}  4{com}.         {c )-}
 .         erase auto.dta
@@ -117,8 +117,7 @@ installed package is up to date
 {com}. 
 . ******** Simulate a workflow to get canonical versions **********
 . saver data/auto.dta, replace
-{txt}(saving in Stata 13 format)
-file data/auto.dta saved
+{txt}file data/auto.dta saved
 
 {com}. qui save_all_figs scatter
 {txt}
@@ -183,7 +182,7 @@ _pwd:{space 11}{res}{res}-PWD-
 {com}. tempfile tfile
 {txt}
 {com}. save `tfile'
-{txt}file -TMPDIR-/ST_0u000001.tmp saved
+{txt}file -TMPDIR-/-tempfile- saved
 
 {com}. 
 . log_closer test_log, raw_dir(raw) rw_line_user_post(rw_line_user)
