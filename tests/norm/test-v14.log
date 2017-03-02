@@ -22,9 +22,15 @@
 
 . else { //100 "syntax error" (didn't run with proper args) -> command found
 .         make_trk_paths absolute, adofolder(ado/)
-.         adoupdate stata_reproducible, update
+.         adoupdate stata_reproducible, update dir(ado/)
 (note: adoupdate updates user-written files; type -update- to check for updates to official Stata)
-(no packages match "stata_reproducible")
+
+Checking status of specified packages...
+
+    [2] stata_reproducible at -PROJ_BASE-:
+        installed package is up to date
+
+(no packages require updating)
 . }
 
 . make_trk_paths relative, adofolder(ado/)
@@ -97,7 +103,7 @@ file auto.dta saved
 .         if `main_version'==14 qui graph_saver norm/scatter-v13-from-v14.gph, replace version(13)
 .         qui graph_saver norm/scatter-v`main_version'.gph, replace version(`main_version')
 . 
-.         foreach fmt in ps eps wmf emf pdf png tif {
+.         foreach fmt in ps eps pdf png tif /*emf wmf*/ {
   2.                 qui graph export raw/scatter-v`main_version'-`c(os)'-raw.`fmt', replace
   3.                 cap /*noi*/ graph_exportr norm/scatter-v`main_version'-`c(os)'.`fmt', replace
   4.         }

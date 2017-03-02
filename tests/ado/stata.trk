@@ -40,7 +40,7 @@ f s\synth.sthlp
 f l\lsynth_mata_subr.mlib
 f s\synthopt.plugin
 e
-S C:\Users\bquist\Documents\GitHub\stata_reproducible
+S ..
 N stata_reproducible.pkg
 D  2 Mar 2017
 U 52
