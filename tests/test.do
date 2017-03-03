@@ -27,11 +27,13 @@ make_trk_paths relative, adofolder(ado/)
 ******** Tests adostorer **************
 *This will change the trk file (inconsequentially), so preserve and restore for version control 
 * (these are not normal daily operations)
-if 0 { //turn if don't want to test (e.g. no network connection)
+//normally turn off as needs network connection and slow. Just turn on to test, not for low reproducibility
+if 0 {
 	tempfile trk_backup
 	copy "ado/stata.trk" `trk_backup'
-	adostorer remove synth, adofolder(ado)
+	cap adostorer remove synth, adofolder(ado)
 	adostorer install synth, adofolder(ado) all mkdirs
+	mata: mata mlib index
 	sysuse smoking
 	xtset state year
 	qui synth cigsale beer(1984(1)1988) cigsale(1988), trunit(3) trperiod(1989)
@@ -88,14 +90,16 @@ if 1 { //graphs and exports
 }
 
 ******** Simulate a workflow to get canonical versions **********
+if 1{
 saver data/auto.dta, replace
+qui graph use raw/scatter-v`main_version'-`c(os)'-raw.gph
 qui save_all_figs scatter
 
 *If another platform updates gphs,then run this
 if "$OMIT_FIG_EXPORT"=="0"{
 	qui do gen_ext_from_gph.do
 }
-
+}
 
 ******* Check the log normalization **************
 local main_version ""

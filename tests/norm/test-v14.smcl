@@ -39,11 +39,13 @@ installed package is up to date
 . ******** Tests adostorer **************
 . *This will change the trk file (inconsequentially), so preserve and restore for version control 
 . * (these are not normal daily operations)
-. if 0 {c -(} //turn if don't want to test (e.g. no network connection)
+. //normally turn off as needs network connection and slow. Just turn on to test, not for low reproducibility
+. if 0 {c -(}
 .         tempfile trk_backup
 .         copy "ado/stata.trk" `trk_backup'
-.         adostorer remove synth, adofolder(ado)
+.         cap adostorer remove synth, adofolder(ado)
 .         adostorer install synth, adofolder(ado) all mkdirs
+.         mata: mata mlib index
 .         sysuse smoking
 .         xtset state year
 .         qui synth cigsale beer(1984(1)1988) cigsale(1988), trunit(3) trperiod(1989)
@@ -116,19 +118,19 @@ file auto.dta saved
 {txt}
 {com}. 
 . ******** Simulate a workflow to get canonical versions **********
+. if 1{c -(}
 . saver data/auto.dta, replace
 file data/auto.dta saved
-
-{com}. qui save_all_figs scatter
-{txt}
-{com}. 
+{com}. qui graph use raw/scatter-v`main_version'-`c(os)'-raw.gph
+. qui save_all_figs scatter
+. 
 . *If another platform updates gphs,then run this
 . if "$OMIT_FIG_EXPORT"=="0"{c -(}
 .         qui do gen_ext_from_gph.do
 . {c )-}
+. {c )-}
 {txt}
 {com}. 
-. 
 . ******* Check the log normalization **************
 . local main_version ""
 {txt}
@@ -148,13 +150,13 @@ c(processors) = -normalized-
 {txt}
 {com}. mac dir
 {txt}{p 0 16}
+T_gm_fix_span:{space 2}{res}{res}0
+{p_end}
+{txt}{p 0 16}
 S_FNDATE:{space 7}{res}{res}-normalized-
 {p_end}
 {txt}{p 0 16}
 S_FN:-normalized-
-{p_end}
-{txt}{p 0 16}
-T_gm_fix_span:{space 2}{res}{res}0
 {p_end}
 {txt}{p 0 16}
 PROJ_ROOT:{space 6}{res}{res}-PROJ_BASE-/
