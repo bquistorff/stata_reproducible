@@ -8,7 +8,7 @@ real scalar delete_line_system(string scalar lcl_name, string scalar type){
 	if (strpos(line,"LOGREMOVE")==1) return(1)
 	/* Hardware details */
 	if (strpos(line,"S_OSDTL:")==1) return(mac_num_del) /*sometimes appears*/
-	if (strpos(line,"S_level:")==1) return(mac_num_del) /*Appears in different orders on different machines*/
+	if (regexm(line,"^(S_level|S_FN|S_FNDATE):")) return(mac_num_del) /*Appears in different orders on different machines*/
 	/* Stata details */
 	if (regexm(line,"^S_(StataMP|StataSE|CONSOLE|MODE):")) return(mac_num_del) /*sometimes appear*/
 	if (regexm(line,"^.*saving in Stata .. format.")) return(1) /*appears depending on version (v13 saving in v13)*/

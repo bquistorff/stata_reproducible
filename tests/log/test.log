@@ -151,8 +151,6 @@ c(processors) = -normalized-
 
 . mac dir
 T_gm_fix_span:  0
-S_FNDATE:       -normalized-
-S_FN:           -normalized-
 PROJ_ROOT:      -PROJ_BASE-/
 DEFAULT_OUT_VERSION:
                 13

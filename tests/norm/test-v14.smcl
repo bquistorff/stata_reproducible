@@ -153,12 +153,6 @@ c(processors) = -normalized-
 T_gm_fix_span:{space 2}{res}{res}0
 {p_end}
 {txt}{p 0 16}
-S_FNDATE:{space 7}{res}{res}-normalized-
-{p_end}
-{txt}{p 0 16}
-S_FN:-normalized-
-{p_end}
-{txt}{p 0 16}
 PROJ_ROOT:{space 6}{res}{res}-PROJ_BASE-/
 {p_end}
 {txt}{p 0 16}

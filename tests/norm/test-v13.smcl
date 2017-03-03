@@ -163,12 +163,6 @@ DEFAULT_OUT_VERSION:{break}
 S_ADO:-normalized-
 {p_end}
 {txt}{p 0 16}
-S_FNDATE:{space 7}{res}{res}-normalized-
-{p_end}
-{txt}{p 0 16}
-S_FN:-normalized-
-{p_end}
-{txt}{p 0 16}
 S_FLAVOR:-normalized-
 {p_end}
 {txt}{p 0 16}

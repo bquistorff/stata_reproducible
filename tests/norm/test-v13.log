@@ -155,8 +155,6 @@ PROJ_ROOT:      -PROJ_BASE-/
 DEFAULT_OUT_VERSION:
                 13
 S_ADO:          -normalized-
-S_FNDATE:       -normalized-
-S_FN:           -normalized-
 S_FLAVOR:       -normalized-
 S_OS:           -normalized-
 S_MACH:         -normalized-
