@@ -51,10 +51,10 @@ Currently, only graph file formats made natively by Stata version 13-14 are supp
 {title:Reproducibility}
 
 {pstd}
-Some formats can not yet be made reproducible: emf,
+Some formats can not yet be made reproducible: emf and wmf. The other formats are reproducible: eps, pdf, png, ps, tif.
 
 {pstd}
-The main sources of non-reproducibility in exported graph files are pdfs.
+The main sources of (fixable) non-reproducibility in exported graph files are pdfs.
 These sometimes (Windows on Stata v13) have timestamps and randomness.
 
 {marker remarks}{...}
@@ -72,3 +72,12 @@ Notes on implementatins: Stata v13 on Windows uses JagPDF 1.4.0 making PDF 1.5 d
 
 {phang}{cmd:. graph_exportr {it:filename}, replace}{p_end}
 
+{pstd}
+To automate convertion of gph files to export formats the below can be modified for a do or ado file (fmts and paths will have to be modified).
+
+{phang}{cmd:local flist : dir "fig/gph/" files "*.gph" , respectcase}{p_end}
+{phang}{cmd:foreach f of local flist}{c -(}{p_end}
+{tab}{cmd:if regexm("`f'","(.+)\.[a-zA-Z0-9]*$") local f_base = regexs(1)}
+{tab}{cmd:graph use "fig/gph/`f_base'"}
+{tab}{cmd:graph_exportr "fig/pdf/`f_base'.pdf", replace}
+{phang}{cmd:}{c )-}{p_end}

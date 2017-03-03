@@ -70,7 +70,9 @@ The main sources of non-reproducibility in gph files are junk padding in the ser
 
 
 {pstd}
-In addition, ths package aims to make similar files across platforms and versions. parallellilng -save, version()-, this extends the graphing command to older versions of stata (this did not exist before either via -graph save- or -version NN: graph save-). gph files are a mixture of binary and text portions and text portions are standardized to unix line endings.This package also standardizes line endings to unix
+In addition, ths package aims to make similar files across platforms and versions. parallellilng -save, version()-, this extends the graphing command to older versions of stata 
+(this did not exist before either via -graph save- or -version NN: graph save-). 
+gph files are a mixture of binary and text portions and text portions are standardized to unix line endings.This package also standardizes line endings to unix
 
 {marker remarks}{...}
 {title:Remarks}

@@ -94,7 +94,25 @@ Make sure this machine can find it's platform-specific package files (once per s
 {phang}{cmd:. global S_ADO `"${S_ADO};code/ado/`r(platformname)'"'}{p_end}
 
 {pstd}
-Install the package
+Install the package from an online source.
 
 {phang}{cmd:. adostorer {it:packagename}, adofolder(/code/ado) all mkdirs}{p_end}
+
+{pstd}
+Installing packages from a source relative to your current folder can be problematic.
+For the stata.trk file to be machine-agnostic it should store the relative path.
+But for updates to work stata.trk needs the absolute path of the package source.
+The solutions is to normally keep relative paths in the stata.trk but temporarily change
+them to relative when updates are needed.  If the package has platform-specific files, use {help adostorer}.
+
+{phang}{cmd:. net install {it:package}, from({it:package_src_absolute_path})}{p_end}
+{phang}{cmd:. make_trk_paths relative, adofolder({it:adofolder})}{p_end}
+
+{pstd}
+Update packages installed from a local source (could alternatively uninstall, and then reinstall as above).
+If the package has platform-specific files, use {help adostorer}. 
+
+{phang}{cmd:. make_trk_paths absolute, adofolder({it:adofolder})}{p_end}
+{phang}{cmd:. adoupdate {it:package}, update}{p_end}
+{phang}{cmd:. make_trk_paths relative, adofolder({it:adofolder})}{p_end}
 
