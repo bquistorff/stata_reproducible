@@ -50,7 +50,14 @@ program _strip_nonreproducibility_dta
 	read_8byte_integer `fhandle', byteorder_num(`byteorder_num') scalar(`sortlist')
 	read_8byte_integer `fhandle', byteorder_num(`byteorder_num') scalar(`formats')
 	read_8byte_integer `fhandle', byteorder_num(`byteorder_num') scalar(`value_label_names')
+	file seek `fhandle' query
+	local prev_num_loc = r(loc)
 	read_8byte_integer `fhandle', byteorder_num(`byteorder_num') scalar(`variable_labels')
+	if `variable_labels'==0{ //sometimes on Windows v13
+		scalar `variable_labels' = `value_label_names' + 19 + 33*`k' + 20
+		file seek `fhandle' `prev_num_loc'
+		write_8byte_integer `fhandle', byteorder_num(`byteorder_num') scalar(`variable_labels')
+	}
 	read_8byte_integer `fhandle', byteorder_num(`byteorder_num') scalar(`characteristics')
 	read_8byte_integer `fhandle', byteorder_num(`byteorder_num') scalar(`data')
 	read_8byte_integer `fhandle', byteorder_num(`byteorder_num') scalar(`strls')
@@ -182,14 +189,13 @@ end
 //Reads in a 64bit (8 byte) unsigned integer
 //Precision info: http://www.stata.com/statalist/archive/2009-08/msg00540.html
 //Assumes that the byte order on the filehandle has been set (-file set byteorder-)
+//2^(4*8)=4,294,967,296 (=2*(c(maxlong)+28))
 program read_8byte_integer
 	syntax anything(name=fhandle), byteorder_num(int) scalar(string)
 	
-	file seek `fhandle' query
 	tempname i1 i2 i lo hi
 	file read `fhandle' %4bu `i1'
 	file read `fhandle' %4bu `i2'
-	//2^(4*8)=4,294,967,296 (=2*(c(maxlong)+28))
 	if `byteorder_num'==1{
 		scalar `hi' = `i1'
 		scalar `lo' = `i2'
@@ -213,4 +219,20 @@ program read_8byte_integer
 		c_local `local' `=`i''
 	}
 	*/
+end
+
+program write_8byte_integer
+	syntax anything(name=fhandle), byteorder_num(int) scalar(string)
+	
+	tempname lo hi
+	scalar `lo' = mod(`scalar',4294967296)
+	scalar `hi' = floor(`scalar'/4294967296)
+	if `byteorder_num'==1{
+		file write `fhandle' %4bu (`hi')
+		file write `fhandle' %4bu (`lo')
+	}
+	else{
+		file write `fhandle' %4bu (`lo')
+		file write `fhandle' %4bu (`hi')
+	}
 end
