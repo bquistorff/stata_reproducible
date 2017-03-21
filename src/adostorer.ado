@@ -34,7 +34,7 @@ program adostorer
 	if inlist("`cmd'","uninstall","update"){
 		** Read stata.trk and uninstall all g files
 		* But "g" files get written as "f" files, so try removing all those but in the platform dirs
-		file open `trk' using `adofolder'/stata.trk, read text
+		file open `trk' using "`adofolder'/stata.trk", read text
 		while 1 {
 			file read `trk' line
 			if r(eof) continue, break
@@ -76,7 +76,7 @@ program adostorer
 		
 		*Now download the "g/G" files
 		* Do this by reading the trk file, finding the source pkg file and reading it.
-		file open `trk' using `adofolder'/stata.trk, read text
+		file open `trk' using "`adofolder'/stata.trk", read text
 		
 		*Burn through the first block
 		while 1{
@@ -94,7 +94,7 @@ program adostorer
 				tempfile rem_pkg_copy_fname
 				tempname rem_pkg_copy_fhandle
 				copy "`rem_pkg_dir'/`pkgname'.pkg" `rem_pkg_copy_fname'
-				file open `rem_pkg_copy_fhandle' using `rem_pkg_copy_fname', read text
+				file open `rem_pkg_copy_fhandle' using "`rem_pkg_copy_fname'", read text
 				while(1){
 					file read `rem_pkg_copy_fhandle' line2
 					mata: st_local("first_let2", substr(st_local("line2"),1,1))
