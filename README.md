@@ -13,13 +13,13 @@ Part of reproducibility is keeping track of package dendencies. It is a good ide
 # Installation:
 With Stata version 13 or later:
 ```Stata
-. net install stata_reproducible, from(https://raw.github.com/bquistorff/stata_reproducible/master/) replace
+net install stata_reproducible, from(https://raw.github.com/bquistorff/stata_reproducible/master/) replace
 ```
 
 For Stata version <13, download as zip, unzip, and then replace the above -net install- with
 
 ```Stata
-. net install stata_reproducible, from(full_local_path_to_files) replace
+net install stata_reproducible, from(full_local_path_to_files) replace
 ```
 
 ## Remarks
